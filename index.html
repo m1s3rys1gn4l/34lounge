@@ -253,9 +253,6 @@ body.ar-mode .search-wrap{direction:ltr}
 .modal-img-wrap{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--dark3)}
 .modal-img-wrap img{width:100%;height:100%;object-fit:cover}
 .modal-img-ph{width:100%;aspect-ratio:16/9;background:var(--dark3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;font-size:4rem}
-.modal-img-upload{position:absolute;bottom:.8rem;right:.8rem;background:rgba(14,12,9,.85);border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.1em;padding:.4rem .8rem;cursor:pointer;backdrop-filter:blur(4px);display:flex;align-items:center;gap:.4rem;transition:all .2s}
-.modal-img-upload:hover{background:var(--gold);color:var(--dark)}
-.modal-img-upload input{display:none}
 .modal-badge-row{position:absolute;top:.8rem;left:.8rem;display:flex;gap:.4rem}
 .modal-body{padding:1.8rem}
 .modal-close{position:absolute;top:.8rem;right:.8rem;background:rgba(14,12,9,.8);border:1px solid var(--border);color:var(--cream-dim);width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;transition:all .2s;z-index:10;backdrop-filter:blur(4px)}
@@ -277,9 +274,6 @@ body.ar-mode .modal-name-ar{font-size:1.8rem;color:var(--white);font-weight:600}
 .modal-actions{display:flex;gap:.8rem;margin-top:1.5rem;flex-wrap:wrap}
 .modal-add-btn{flex:1;background:var(--gold);color:var(--dark);border:none;padding:1rem;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s;min-width:180px}
 .modal-add-btn:hover{background:var(--gold-light);transform:translateY(-1px)}
-.modal-edit-btn{background:transparent;color:var(--cream-dim);border:1px solid var(--border);padding:.9rem 1.2rem;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem;text-decoration:none}
-.modal-edit-btn:hover{border-color:var(--gold);color:var(--gold)}
-.modal-img-note{font-size:.7rem;color:var(--gold-dim);font-style:italic;margin-top:.4rem;opacity:.8;text-align:center}
 
 /* ══ IMAGE GUIDE BANNER ══ */
 .img-guide{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.2);max-width:960px;margin:2rem auto;padding:1.5rem 2rem;display:flex;align-items:flex-start;gap:1.2rem}
@@ -1363,20 +1357,12 @@ function openModal(itemId, category) {
     ? `<div class="modal-img-wrap">
         <img src="${imgSrc}" alt="${item.name}" onerror="modalImgFallback(this,'${item.emoji}')"/>
         ${item.badge ? `<div class="modal-badge-row"><span class="item-badge">${item.badge}</span></div>` : ''}
-        <label class="modal-img-upload" title="Replace image">
-          📷 Replace Image
-          <input type="file" accept="image/*" onchange="handleImgUpload(event,'${item.id}')"/>
-        </label>
       </div>`
     : `<div style="position:relative">
         <div class="modal-img-ph">${item.emoji}
           <small style="font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.2em;color:var(--gold-dim);margin-top:.3rem">NO IMAGE YET</small>
         </div>
         ${item.badge ? `<div class="modal-badge-row"><span class="item-badge">${item.badge}</span></div>` : ''}
-        <label class="modal-img-upload" title="Upload image">
-          📷 Upload Image
-          <input type="file" accept="image/*" onchange="handleImgUpload(event,'${item.id}')"/>
-        </label>
       </div>`;
 
   document.getElementById('modalInner').innerHTML = `
@@ -1397,9 +1383,7 @@ function openModal(itemId, category) {
         <button class="modal-add-btn" onclick="addToCart('${item.id}','${category}');showToast('${item.name} added to cart')">
           + Add to Order — KWD ${item.price.toFixed(3)}
         </button>
-        <a href="admin.html#item-${item.id}" class="modal-edit-btn">⚙️ Edit in Back Office</a>
       </div>
-      <div class="modal-img-note">💡 Upload an image above — saved instantly to this device</div>
     </div>`;
 
   document.getElementById('modalOverlay').classList.add('open');
@@ -1420,38 +1404,6 @@ function translateDescAr(id, desc) {
   // Items that have Arabic descriptions hardcoded can be added here
   // For now show a note pointing to back office
   return desc ? `<span style="color:var(--gold-dim);font-size:.75rem">الوصف بالعربية: أضفه من لوحة التحكم ← Back Office</span>` : '';
-}
-
-/* ════════════════════════════════════════
-   IMAGE UPLOAD VIA MODAL
-════════════════════════════════════════ */
-function handleImgUpload(event, itemId) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const dataUrl = e.target.result;
-    localStorage.setItem('img_' + itemId, dataUrl);
-    showToast('✓ Image saved for ' + itemId);
-    // Refresh the card in the grid
-    const card = document.querySelector(`[data-id="${itemId}"]`);
-    if (card) {
-      const cat = card.dataset.cat;
-      const item = MENU[cat] && MENU[cat].find(i => i.id === itemId);
-      if (item) { item.img = dataUrl; card.outerHTML = renderCard(item, cat); }
-    }
-    // Refresh modal image
-    const modalImg = document.querySelector('.modal-img-wrap img');
-    if (modalImg) modalImg.src = dataUrl;
-    const modalPh = document.querySelector('.modal-img-ph');
-    if (modalPh) {
-      modalPh.parentElement.innerHTML = `<div class="modal-img-wrap">
-        <img src="${dataUrl}" alt="item" style="width:100%;height:100%;object-fit:cover"/>
-        <label class="modal-img-upload">📷 Replace Image<input type="file" accept="image/*" onchange="handleImgUpload(event,'${itemId}')"/></label>
-      </div>`;
-    }
-  };
-  reader.readAsDataURL(file);
 }
 
 /* ════════════════════════════════════════
