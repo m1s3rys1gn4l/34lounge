@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>34 Lounge — Back Office</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Naskh+Arabic:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:#7a5f28; --gold-pale:rgba(201,168,76,.08);
+  --dark:#0a0906; --dark2:#111009; --dark3:#1a1712; --dark4:#23201a; --dark5:#2d2920;
+  --cream:#f5eed8; --cream-dim:#c4b98a; --white:#fdf8ef;
+  --border:rgba(201,168,76,.15); --border-bright:rgba(201,168,76,.3);
+  --green:#4caf88; --red:#c95a4c; --blue:#4c8ac9; --amber:#c9a84c;
+  --sidebar-w:240px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--dark);color:var(--cream);font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
+
+/* ── NOISE OVERLAY ── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.3}
+
+/* ── LAYOUT ── */
+.bo-layout{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s}
+.sidebar-logo{padding:1.5rem 1.2rem 1rem;border-bottom:1px solid var(--border)}
+.sidebar-logo .logo-main{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;color:var(--gold-light);letter-spacing:.06em}
+.sidebar-logo .logo-sub{font-size:.55rem;letter-spacing:.3em;color:var(--gold-dim);font-family:'Cinzel',serif;margin-top:.2rem;text-transform:uppercase}
+.sidebar-logo .logo-badge{display:inline-flex;align-items:center;gap:.3rem;margin-top:.5rem;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);padding:.2rem .6rem;font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.12em;color:var(--gold-dim);text-transform:uppercase}
+
+.sidebar-nav{flex:1;padding:.8rem 0;overflow-y:auto}
+.nav-section-label{font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);padding:.6rem 1.2rem .3rem;opacity:.6}
+.nav-item{display:flex;align-items:center;gap:.7rem;padding:.65rem 1.2rem;cursor:pointer;color:var(--cream-dim);font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;transition:all .18s;border-left:2px solid transparent;position:relative}
+.nav-item:hover{background:var(--gold-pale);color:var(--cream);border-left-color:rgba(201,168,76,.3)}
+.nav-item.active{background:var(--gold-pale);color:var(--gold);border-left-color:var(--gold)}
+.nav-item .nav-icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--gold);color:var(--dark);border-radius:10px;font-size:.48rem;padding:.1rem .4rem;font-weight:700}
+
+.sidebar-footer{padding:1rem 1.2rem;border-top:1px solid var(--border)}
+.sidebar-footer a{display:flex;align-items:center;gap:.6rem;color:var(--gold-dim);text-decoration:none;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.08em;transition:color .2s}
+.sidebar-footer a:hover{color:var(--gold)}
+
+/* ── MAIN ── */
+.bo-main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* ── TOP BAR ── */
+.topbar{background:rgba(10,9,6,.95);border-bottom:1px solid var(--border);padding:.8rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
+.topbar-title{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.12em;color:var(--gold-light);text-transform:uppercase}
+.topbar-right{display:flex;align-items:center;gap:.8rem}
+.topbar-time{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--gold-dim);background:var(--dark3);border:1px solid var(--border);padding:.3rem .7rem}
+.topbar-btn{background:none;border:1px solid var(--border);color:var(--cream-dim);padding:.4rem .8rem;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem}
+.topbar-btn:hover{border-color:var(--gold);color:var(--gold)}
+.topbar-btn.primary{background:var(--gold);color:var(--dark);border-color:var(--gold)}
+.topbar-btn.primary:hover{background:var(--gold-light)}
+
+/* ── CONTENT PANE ── */
+.content{flex:1;padding:2rem}
+.pane{display:none}
+.pane.active{display:block}
+
+/* ── SECTION HEADING ── */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.8rem;gap:1rem;flex-wrap:wrap}
+.page-header-left h1{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:600;color:var(--gold-light);letter-spacing:.04em}
+.page-header-left p{font-size:.85rem;color:var(--cream-dim);margin-top:.2rem;font-style:italic}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1px;background:var(--border);margin-bottom:2rem}
+.stat-card{background:var(--dark2);padding:1.4rem;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold-dim)}
+.stat-card.green::before{background:var(--green)}
+.stat-card.red::before{background:var(--red)}
+.stat-card.blue::before{background:var(--blue)}
+.stat-card.gold::before{background:var(--gold)}
+.stat-label{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.6rem}
+.stat-value{font-family:'Cinzel',serif;font-size:2rem;font-weight:700;color:var(--white);line-height:1}
+.stat-sub{font-size:.75rem;color:var(--cream-dim);margin-top:.3rem;font-style:italic}
+.stat-icon{position:absolute;bottom:.8rem;right:1rem;font-size:2rem;opacity:.15}
+
+/* ── CATEGORY FILTER ── */
+.cat-filter-bar{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem}
+.cat-filter-btn{background:var(--dark3);border:1px solid var(--border);color:var(--cream-dim);padding:.4rem .9rem;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .18s}
+.cat-filter-btn:hover{border-color:var(--gold-dim);color:var(--cream)}
+.cat-filter-btn.active{background:var(--gold-pale);border-color:var(--gold);color:var(--gold)}
+
+/* ── SEARCH BAR ── */
+.search-row{display:flex;gap:.6rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.bo-search{flex:1;min-width:220px;background:var(--dark3);border:1px solid var(--border);color:var(--cream);padding:.6rem 1rem;font-family:'Cormorant Garamond',serif;font-size:.95rem;outline:none;transition:border-color .2s}
+.bo-search:focus{border-color:var(--gold)}
+.bo-search::placeholder{color:var(--gold-dim);font-style:italic}
+
+/* ── MENU TABLE ── */
+.menu-table-wrap{overflow-x:auto}
+.menu-table{width:100%;border-collapse:collapse;background:var(--dark2)}
+.menu-table th{font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-dim);padding:.8rem 1rem;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;background:var(--dark3)}
+.menu-table td{padding:.75rem 1rem;border-bottom:1px solid rgba(201,168,76,.06);font-size:.88rem;color:var(--cream-dim);vertical-align:middle}
+.menu-table tr:hover td{background:var(--dark3)}
+.menu-table .item-thumb{width:48px;height:48px;object-fit:cover;background:var(--dark4);flex-shrink:0;border:1px solid var(--border)}
+.menu-table .item-thumb-ph{width:48px;height:48px;background:var(--dark4);display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:1px solid var(--border)}
+.item-name-cell{color:var(--white);font-weight:600}
+.item-ar-cell{font-family:'Noto Naskh Arabic',serif;direction:rtl;font-size:.8rem;color:var(--gold-dim)}
+.price-cell{font-family:'Cinzel',serif;font-size:.75rem;color:var(--gold);white-space:nowrap}
+.badge-pill{display:inline-flex;padding:.2rem .55rem;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase}
+.badge-pill.new{background:rgba(76,175,136,.15);color:var(--green);border:1px solid rgba(76,175,136,.3)}
+.badge-pill.premium{background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.25)}
+.action-btns{display:flex;gap:.4rem;align-items:center}
+.act-btn{background:none;border:1px solid var(--border);color:var(--cream-dim);padding:.3rem .6rem;font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:.3rem}
+.act-btn:hover{border-color:var(--gold);color:var(--gold)}
+.act-btn.danger:hover{border-color:var(--red);color:var(--red)}
+.act-btn.success:hover{border-color:var(--green);color:var(--green)}
+
+/* ── EDIT MODAL ── */
+.edit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(6px)}
+.edit-overlay.open{opacity:1;pointer-events:all}
+.edit-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-48%) scale(.96);z-index:201;background:var(--dark2);border:1px solid var(--border);width:min(680px,96vw);max-height:90vh;overflow-y:auto;transition:all .3s cubic-bezier(.34,1.56,.64,1);opacity:0;pointer-events:none}
+.edit-modal.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:all}
+.edit-modal-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--dark3)}
+.edit-modal-title{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.1em;color:var(--gold-light)}
+.edit-modal-close{background:none;border:none;color:var(--cream-dim);font-size:1.2rem;cursor:pointer;transition:color .2s}
+.edit-modal-close:hover{color:var(--gold)}
+.edit-modal-body{padding:1.5rem}
+
+/* ── FORM ELEMENTS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.form-group{display:flex;flex-direction:column;gap:.4rem}
+.form-group.full{grid-column:1/-1}
+.form-label{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-dim)}
+.form-input{background:var(--dark3);border:1px solid var(--border);color:var(--cream);padding:.7rem .9rem;font-family:'Cormorant Garamond',serif;font-size:1rem;outline:none;transition:border-color .2s;width:100%}
+.form-input:focus{border-color:var(--gold)}
+.form-input[type=number]{font-family:'JetBrains Mono',monospace;font-size:.9rem}
+textarea.form-input{resize:vertical;min-height:80px;line-height:1.5}
+.form-select{background:var(--dark3);border:1px solid var(--border);color:var(--cream);padding:.7rem .9rem;font-family:'Cinzel',serif;font-size:.65rem;outline:none;cursor:pointer;width:100%;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M6 8L0 0h12z' fill='%237a5f28'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .8rem center;transition:border-color .2s}
+.form-select:focus{border-color:var(--gold);outline:none}
+
+/* Image upload */
+.img-upload-zone{border:2px dashed var(--border);padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:var(--dark3)}
+.img-upload-zone:hover{border-color:var(--gold);background:var(--gold-pale)}
+.img-upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.img-upload-zone .upload-icon{font-size:2rem;margin-bottom:.4rem}
+.img-upload-zone p{font-size:.78rem;color:var(--cream-dim);font-style:italic}
+.img-upload-zone small{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--gold-dim);margin-top:.2rem;display:block}
+.img-preview{width:100%;aspect-ratio:16/9;object-fit:cover;display:none;border:1px solid var(--border)}
+.img-preview.show{display:block}
+
+.form-actions{display:flex;gap:.7rem;margin-top:1.5rem;flex-wrap:wrap}
+.form-btn{padding:.8rem 1.6rem;font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .2s;border:none;display:inline-flex;align-items:center;gap:.4rem}
+.form-btn.save{background:var(--gold);color:var(--dark)}
+.form-btn.save:hover{background:var(--gold-light)}
+.form-btn.cancel{background:transparent;color:var(--cream-dim);border:1px solid var(--border)}
+.form-btn.cancel:hover{border-color:var(--gold);color:var(--gold)}
+.form-btn.danger{background:transparent;color:var(--red);border:1px solid rgba(201,90,76,.3)}
+.form-btn.danger:hover{background:rgba(201,90,76,.1)}
+
+/* Toggle switch */
+.toggle-row{display:flex;align-items:center;gap:.8rem}
+.toggle-switch{position:relative;width:40px;height:20px;cursor:pointer;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--dark4);border:1px solid var(--border);border-radius:20px;transition:.3s}
+.toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:2px;bottom:2px;background:var(--gold-dim);border-radius:50%;transition:.3s}
+.toggle-switch input:checked + .toggle-slider{background:rgba(76,175,136,.2);border-color:var(--green)}
+.toggle-switch input:checked + .toggle-slider:before{transform:translateX(20px);background:var(--green)}
+.toggle-label{font-size:.82rem;color:var(--cream-dim)}
+
+/* ── IMAGE MANAGER ── */
+.img-manager-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--border)}
+.img-card{background:var(--dark2);display:flex;flex-direction:column}
+.img-card-thumb{aspect-ratio:4/3;position:relative;background:var(--dark3);overflow:hidden;cursor:pointer}
+.img-card-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.img-card-thumb:hover img{transform:scale(1.05)}
+.img-card-thumb-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;color:var(--gold-dim);font-size:2rem}
+.img-card-thumb-ph small{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--gold-dim);opacity:.6}
+.img-card-info{padding:.8rem}
+.img-card-id{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--gold);margin-bottom:.2rem}
+.img-card-name{font-size:.8rem;color:var(--cream);line-height:1.3;margin-bottom:.5rem}
+.img-card-actions{display:flex;gap:.4rem}
+.img-upload-label{flex:1;background:var(--dark3);border:1px solid var(--border);color:var(--cream-dim);padding:.4rem;font-family:'Cinzel',serif;font-size:.48rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;text-align:center;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:.3rem}
+.img-upload-label:hover{border-color:var(--gold);color:var(--gold)}
+.img-upload-label input{display:none}
+.img-clear-btn{background:none;border:1px solid rgba(201,90,76,.25);color:rgba(201,90,76,.6);padding:.4rem .6rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}
+.img-clear-btn:hover{border-color:var(--red);color:var(--red)}
+.has-img-badge{position:absolute;top:.4rem;left:.4rem;background:var(--green);color:white;font-family:'Cinzel',serif;font-size:.42rem;letter-spacing:.1em;padding:.15rem .35rem}
+
+/* ── ORDERS / ACTIVITY ── */
+.activity-list{display:flex;flex-direction:column;gap:1px;background:var(--border)}
+.activity-item{background:var(--dark2);padding:1rem 1.2rem;display:flex;align-items:center;gap:1rem;transition:background .15s}
+.activity-item:hover{background:var(--dark3)}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.activity-dot.gold{background:var(--gold)}
+.activity-dot.green{background:var(--green)}
+.activity-dot.blue{background:var(--blue)}
+.activity-dot.red{background:var(--red)}
+.activity-info{flex:1}
+.activity-title{font-size:.88rem;color:var(--white)}
+.activity-time{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--gold-dim);margin-top:.15rem}
+.activity-meta{font-family:'Cinzel',serif;font-size:.55rem;color:var(--cream-dim);text-align:right}
+
+/* ── SETTINGS ── */
+.settings-section{background:var(--dark2);border:1px solid var(--border);margin-bottom:1.2rem}
+.settings-section-header{padding:1rem 1.4rem;border-bottom:1px solid var(--border);background:var(--dark3);display:flex;align-items:center;gap:.7rem}
+.settings-section-header h3{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.settings-section-body{padding:1.4rem}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid rgba(201,168,76,.05);gap:1rem;flex-wrap:wrap}
+.settings-row:last-child{border-bottom:none}
+.settings-row-label{font-size:.9rem;color:var(--cream)}
+.settings-row-desc{font-size:.75rem;color:var(--cream-dim);font-style:italic;margin-top:.1rem}
+
+/* ── TOAST ── */
+.bo-toast{position:fixed;bottom:2rem;right:2rem;background:var(--dark3);border:1px solid var(--gold);padding:.7rem 1.4rem;font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;color:var(--gold);opacity:0;transition:all .3s;z-index:900;pointer-events:none;transform:translateY(10px)}
+.bo-toast.show{opacity:1;transform:translateY(0)}
+.bo-toast.success{border-color:var(--green);color:var(--green)}
+.bo-toast.danger{border-color:var(--red);color:var(--red)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--gold-dim)}
+.empty-state .empty-icon{font-size:3rem;margin-bottom:.8rem;opacity:.4}
+.empty-state p{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:none}
+  .bo-main{margin-left:0}
+  .form-grid{grid-template-columns:1fr}
+  .topbar{padding:.7rem 1rem}
+  .ham-toggle{display:flex!important}
+}
+.ham-toggle{display:none;flex-direction:column;gap:4px;cursor:pointer;background:none;border:none;padding:.4rem}
+.ham-toggle span{display:block;width:20px;height:2px;background:var(--gold-dim)}
+.overlay-mob{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+.overlay-mob.open{display:block}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.pane.active{animation:fadeIn .25s ease both}
+
+/* ── LOGIN GATE ── */
+.login-screen{position:fixed;inset:0;background:var(--dark);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem}
+.login-box{width:min(360px,100%);background:var(--dark2);border:1px solid var(--border);padding:2rem 1.8rem;text-align:center}
+.login-box .logo-main{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:var(--gold-light);letter-spacing:.06em}
+.login-box .logo-sub{font-size:.55rem;letter-spacing:.3em;color:var(--gold-dim);font-family:'Cinzel',serif;margin:.3rem 0 1.6rem;text-transform:uppercase}
+.login-box .form-label{display:block;text-align:left;margin-bottom:.4rem}
+.login-err{color:var(--red);font-size:.78rem;margin-top:.7rem;display:none;font-style:italic}
+.login-submit{width:100%;margin-top:1.2rem;background:var(--gold);color:var(--dark);border:none;padding:.8rem;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.login-submit:hover{background:var(--gold-light)}
+</style>
+</head>
+<body>
+
+<!-- ══════════ LOGIN GATE ══════════ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="logo-main">34 Lounge</div>
+    <div class="logo-sub">Back Office Login</div>
+    <label class="form-label" for="loginPw">Password</label>
+    <input class="form-input" type="password" id="loginPw" placeholder="Enter admin password" autocomplete="current-password" onkeydown="if(event.key==='Enter')tryLogin()"/>
+    <div class="login-err" id="loginErr">Incorrect password</div>
+    <button class="login-submit" onclick="tryLogin()">Unlock Back Office</button>
+  </div>
+</div>
+
+<div class="bo-layout" id="boLayout" style="display:none">
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-main">34 Lounge</div>
+    <div class="logo-sub">Back Office</div>
+    <div class="logo-badge">⚙️ Admin Panel</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <div class="nav-item active" data-pane="dashboard" onclick="switchPane('dashboard',this)">
+      <span class="nav-icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" data-pane="menu-items" onclick="switchPane('menu-items',this)">
+      <span class="nav-icon">🍽</span> Menu Items
+    </div>
+    <div class="nav-item" data-pane="images" onclick="switchPane('images',this)">
+      <span class="nav-icon">📸</span> Image Manager
+    </div>
+
+    <div class="nav-section-label" style="margin-top:.8rem">Tools</div>
+    <div class="nav-item" data-pane="add-item" onclick="switchPane('add-item',this)">
+      <span class="nav-icon">➕</span> Add New Item
+    </div>
+    <div class="nav-item" data-pane="activity" onclick="switchPane('activity',this)">
+      <span class="nav-icon">📋</span> Activity Log
+    </div>
+    <div class="nav-item" data-pane="settings" onclick="switchPane('settings',this)">
+      <span class="nav-icon">⚙️</span> Settings
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="index.html">← Back to Menu</a>
+    <a href="#" onclick="logout();return false;" style="margin-top:.5rem">🔒 Log Out</a>
+  </div>
+</aside>
+
+<div class="overlay-mob" id="mobOverlay" onclick="closeMobSidebar()"></div>
+
+<!-- ══════════ MAIN ══════════ -->
+<main class="bo-main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:.8rem">
+      <button class="ham-toggle" onclick="toggleMobSidebar()"><span></span><span></span><span></span></button>
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-time" id="liveClock">--:--:--</div>
+      <a href="index.html" class="topbar-btn">👁 View Menu</a>
+      <button class="topbar-btn primary" onclick="exportData()">⬇ Export</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ DASHBOARD PANE ══ -->
+    <div class="pane active" id="pane-dashboard">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Dashboard Overview</h1>
+          <p>Real-time snapshot of your menu content</p>
+        </div>
+        <button class="topbar-btn" onclick="refreshStats()">↻ Refresh</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid" id="statsGrid"></div>
+
+      <!-- Category breakdown -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin-bottom:2rem" id="catBreakdown"></div>
+
+      <!-- Recent items -->
+      <div style="margin-bottom:.8rem;display:flex;align-items:center;justify-content:space-between">
+        <span style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-dim)">Items Missing Images</span>
+        <button class="act-btn" onclick="switchPane('images',document.querySelector('[data-pane=images]'))">Manage All →</button>
+      </div>
+      <div class="activity-list" id="missingImgList"></div>
+    </div>
+
+    <!-- ══ MENU ITEMS PANE ══ -->
+    <div class="pane" id="pane-menu-items">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Menu Items</h1>
+          <p>Edit, update pricing, toggle badges, and upload images for every item</p>
+        </div>
+        <button class="topbar-btn primary" onclick="switchPane('add-item',document.querySelector('[data-pane=add-item]'))">+ Add Item</button>
+      </div>
+
+      <div class="search-row">
+        <input class="bo-search" type="text" id="menuSearch" placeholder="Search by name, Arabic, description…" oninput="filterMenuTable()"/>
+      </div>
+
+      <div class="cat-filter-bar" id="menuCatFilter"></div>
+
+      <div class="menu-table-wrap">
+        <table class="menu-table" id="menuTable">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Arabic</th>
+              <th>Category</th>
+              <th>Price (KWD)</th>
+              <th>Badge</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="menuTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ IMAGE MANAGER PANE ══ -->
+    <div class="pane" id="pane-images">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Image Manager</h1>
+          <p>Upload, replace, or clear images for every menu item. Saved to this device's localStorage.</p>
+        </div>
+        <div style="display:flex;gap:.5rem">
+          <button class="topbar-btn" onclick="clearAllImages()">🗑 Clear All</button>
+          <button class="topbar-btn primary" onclick="bulkUpload()">📦 Bulk Upload Guide</button>
+        </div>
+      </div>
+      <div class="cat-filter-bar" id="imgCatFilter"></div>
+      <div class="img-manager-grid" id="imgGrid"></div>
+    </div>
+
+    <!-- ══ ADD ITEM PANE ══ -->
+    <div class="pane" id="pane-add-item">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Add New Item</h1>
+          <p>Create a new menu item — it will be saved to localStorage and appear on the menu page</p>
+        </div>
+      </div>
+
+      <div style="max-width:680px">
+        <div style="background:var(--dark2);border:1px solid var(--border);padding:1.5rem">
+          <div class="form-grid" id="addItemForm">
+            <div class="form-group">
+              <label class="form-label">Item ID *</label>
+              <input class="form-input" id="new-id" placeholder="e.g. custom1" style="font-family:'JetBrains Mono',monospace"/>
+              <small style="font-size:.68rem;color:var(--gold-dim);margin-top:.2rem;font-style:italic">Unique ID — used for image matching</small>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category *</label>
+              <select class="form-select" id="new-cat"></select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Name (English) *</label>
+              <input class="form-input" id="new-name" placeholder="e.g. Grilled Sea Bass"/>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Name (Arabic)</label>
+              <input class="form-input" id="new-ar" placeholder="الاسم بالعربي" style="direction:rtl;font-family:'Noto Naskh Arabic',serif"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Price (KWD) *</label>
+              <input class="form-input" id="new-price" type="number" step="0.001" min="0" placeholder="0.000"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Badge</label>
+              <select class="form-select" id="new-badge">
+                <option value="">None</option>
+                <option value="New">New</option>
+                <option value="Premium">Premium</option>
+                <option value="Chef's Pick">Chef's Pick</option>
+                <option value="Seasonal">Seasonal</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Emoji Icon</label>
+              <input class="form-input" id="new-emoji" placeholder="🍽" maxlength="4"/>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Description</label>
+              <textarea class="form-input" id="new-desc" rows="3" placeholder="Ingredients, preparation, flavour notes…"></textarea>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Image Upload</label>
+              <div class="img-upload-zone" id="newItemImgZone">
+                <input type="file" accept="image/*" onchange="previewAddImg(event)"/>
+                <div class="upload-icon">📷</div>
+                <p>Click to upload image</p>
+                <small>JPG, PNG, WebP — any size</small>
+              </div>
+              <img class="img-preview" id="newItemPreview"/>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="form-btn save" onclick="saveNewItem()">✓ Save Item to Menu</button>
+            <button class="form-btn cancel" onclick="resetAddForm()">↺ Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ACTIVITY PANE ══ -->
+    <div class="pane" id="pane-activity">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Activity Log</h1>
+          <p>History of changes made in this Back Office session</p>
+        </div>
+        <button class="topbar-btn" onclick="clearLog()">🗑 Clear Log</button>
+      </div>
+      <div class="activity-list" id="activityLog">
+        <div class="empty-state"><div class="empty-icon">📋</div><p>No activity yet this session</p></div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS PANE ══ -->
+    <div class="pane" id="pane-settings">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Settings</h1>
+          <p>Configure restaurant details and menu options</p>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-header"><h3>🏠 Restaurant Info</h3></div>
+        <div class="settings-section-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Restaurant Name</label>
+              <input class="form-input" id="set-name" value="34 Lounge"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">WhatsApp Number</label>
+              <input class="form-input" id="set-phone" value="+965 6666 1404" style="font-family:'JetBrains Mono',monospace"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Location</label>
+              <input class="form-input" id="set-location" value="Darah Mall, Kuwait City"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Currency</label>
+              <input class="form-input" id="set-currency" value="KWD"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-header"><h3>📋 Menu Display</h3></div>
+        <div class="settings-section-body">
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Show Arabic names on cards</div>
+              <div class="settings-row-desc">Display Arabic subtitle below English name on every card</div>
+            </div>
+            <label class="toggle-switch"><input type="checkbox" id="set-showAr" checked/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Show "No Image" placeholder</div>
+              <div class="settings-row-desc">Show emoji placeholder when no photo is uploaded</div>
+            </div>
+            <label class="toggle-switch"><input type="checkbox" id="set-showPh" checked/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Enable item detail popups</div>
+              <div class="settings-row-desc">Open full-screen detail modal when clicking a card</div>
+            </div>
+            <label class="toggle-switch"><input type="checkbox" id="set-modal" checked/><span class="toggle-slider"></span></label>
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Enable WhatsApp ordering</div>
+              <div class="settings-row-desc">Show cart checkout via WhatsApp</div>
+            </div>
+            <label class="toggle-switch"><input type="checkbox" id="set-wa" checked/><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-header"><h3>💾 Data Management</h3></div>
+        <div class="settings-section-body">
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Export all custom items</div>
+              <div class="settings-row-desc">Download JSON of items added via Back Office</div>
+            </div>
+            <button class="act-btn" onclick="exportData()">⬇ Export JSON</button>
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Clear all uploaded images</div>
+              <div class="settings-row-desc">Remove all images stored in localStorage</div>
+            </div>
+            <button class="act-btn danger" onclick="clearAllImages()">🗑 Clear Images</button>
+          </div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Reset custom menu items</div>
+              <div class="settings-row-desc">Delete all items added via Back Office (original items untouched)</div>
+            </div>
+            <button class="act-btn danger" onclick="resetCustomItems()">↺ Reset Custom</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="form-btn save" onclick="saveSettings()">✓ Save Settings</button>
+    </div>
+
+  </div><!-- /content -->
+</main>
+</div><!-- /layout -->
+
+<!-- ══════════ EDIT MODAL ══════════ -->
+<div class="edit-overlay" id="editOverlay" onclick="closeEditModal()"></div>
+<div class="edit-modal" id="editModal">
+  <div class="edit-modal-header">
+    <div class="edit-modal-title" id="editModalTitle">Edit Item</div>
+    <button class="edit-modal-close" onclick="closeEditModal()">✕</button>
+  </div>
+  <div class="edit-modal-body">
+    <div class="form-grid">
+      <div class="form-group full">
+        <label class="form-label">Name (English)</label>
+        <input class="form-input" id="edit-name"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Name (Arabic)</label>
+        <input class="form-input" id="edit-ar" style="direction:rtl;font-family:'Noto Naskh Arabic',serif"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Price (KWD)</label>
+        <input class="form-input" id="edit-price" type="number" step="0.001" min="0"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Badge</label>
+        <select class="form-select" id="edit-badge">
+          <option value="">None</option>
+          <option value="New">New</option>
+          <option value="Premium">Premium</option>
+          <option value="Chef's Pick">Chef's Pick</option>
+          <option value="Seasonal">Seasonal</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Emoji</label>
+        <input class="form-input" id="edit-emoji" maxlength="4"/>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Description</label>
+        <textarea class="form-input" id="edit-desc" rows="3"></textarea>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Image</label>
+        <div class="img-upload-zone">
+          <input type="file" accept="image/*" id="edit-img-input" onchange="handleEditImg(event)"/>
+          <div class="upload-icon">📷</div>
+          <p>Click to upload or replace image</p>
+          <small>Saved instantly to this device</small>
+        </div>
+        <img class="img-preview" id="edit-img-preview"/>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="form-btn save" onclick="saveEditItem()">✓ Save Changes</button>
+      <button class="form-btn cancel" onclick="closeEditModal()">Cancel</button>
+      <button class="form-btn danger" onclick="deleteItem()">🗑 Delete Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="bo-toast" id="boToast"></div>
+
+<script>
+/* ════════════════════════════════════════
+   MENU DATA (mirror from menu page)
+════════════════════════════════════════ */
+const MENU = {
+  breakfast:[
+    {id:'b1',name:'34 Morning Breakfast',ar:'34 فطور الصباح',price:13.500,badge:'New',emoji:'🍳',desc:'Hammous, Lebneh, Foul, Musabbaha, Gemar, Eggplant, Fried Cauliflower, White Cheese, Filafil/Spring Roll/Sambusek, 2 Eggs, Vegetable Relish, Olives, Honey, Butter, Jam, Karak Tea & Water — with Lebanese Bread, Fathayer Cheese & Zaatar.',img:'images/b1.jpg'},
+    {id:'b2',name:'Lounge Lebanese Breakfast',ar:'صالة الإفطار اللبناني',price:10.500,emoji:'🫕',desc:'Hammous, Fatteh Eggplant, Mutabbal, Fattush, Lebneh, Filafil, Foul, White Cheese, Egg of choice, Olives & Pickles — with freshly baked Lebanese Bread, Bread Rolls, Tea & Water.',img:'images/b2.jpg'},
+    {id:'b3',name:'New Sunrise Breakfast',ar:'فطور الشروق',price:6.500,badge:'New',emoji:'🌅',desc:'Hamous, Lebneh, Foul, Filafil, White Fetta Cheese, Green Salad, Olives, Pickles & Tea — with freshly baked Lebanese Bread.',img:'images/b3.jpg'},
+    {id:'b4',name:'Mushroom Omlette',ar:'عجة الفطر',price:3.500,emoji:'🍄',desc:'Egg omlette with mushrooms — served with beef sausage, hash brown potato, jam, butter, honey, homemade bread & toasted bread.',img:'images/b4.jpeg'},
+    {id:'b5',name:'American Cheese Omlette',ar:'عجة الجبن الأمريكية',price:3.500,emoji:'🧀',desc:'Egg omlette stuffed with cheese — served with beef sausage, hash brown potato, jam, butter, honey, homemade & toasted bread.',img:'images/b5.jpeg'},
+    {id:'b6',name:'Hammous',ar:'حمص',price:2.000,emoji:'🫙',desc:'',img:'images/b6.jpeg'},
+    {id:'b7',name:'Foul Mudammas',ar:'فول مدمس',price:2.000,emoji:'🫘',desc:'',img:'images/b7.jpeg'},
+    {id:'b8',name:'Lebneh',ar:'لبنة',price:2.000,emoji:'🥛',desc:'',img:'images/b8.jpeg'},
+    {id:'b9',name:'Filafil',ar:'فلافيل',price:1.750,emoji:'🟢',desc:'',img:'images/b9.jpeg'},
+  ],
+  salad:[
+    {id:'s1',name:'Kale Salad',ar:'سلطة كيل',price:4.750,emoji:'🥗',desc:'Fresh kale, mixed lettuce, shredded cherry tomato, pomegranate seeds, muesli — with creamy balsamic sauce & Burrata.',img:'images/s1.jpeg'},
+    {id:'s2',name:'Mexican Salad',ar:'سلطة مكسيكية',price:4.500,emoji:'🌮',desc:'Mixed bell pepper, tomato, cucumber, red onion, red beans — with Mexican mild sauce & crispy tortilla chips.',img:'images/s2.jpeg'},
+    {id:'s3',name:'Parma Quinoa Salad',ar:'بارما كينوا سلاد',price:4.500,emoji:'🌾',desc:'Multi quinoa, Lulu Russo, cucumber, mixed bell pepper, tomato, sweet corn — pink sauce, avocado, parmesan & almond slices.',img:'images/s3.jpeg'},
+    {id:'s4',name:'Kalamatta Greek Salad',ar:'قلاماتا سلطة يوناني',price:4.250,emoji:'🫒',desc:'Roman lettuce, tomato, capsicum trio, cucumber, red onion, Kalamata olives & Feta cheese — vinaigrette dressing.',img:'images/s4.jpeg'},
+    {id:'s5',name:'Parma Caesar Salad',ar:'بيرما سيزر',price:3.250,emoji:'🥬',desc:'Shredded Roman lettuce, bread crouton, parmesan — special Caesar dressing. Add Chicken +1.000 · Shrimps +1.500',img:'images/s5.jpeg'},
+    {id:'s6',name:'34 Lounge Mixed Salad',ar:'سلطة 34 لاونج',price:4.500,emoji:'🥑',desc:'Edamame, avocado, sweet corn, tomato, cucumber, Lulu Russo — 34 Lounge special sauce.',img:'images/s6.jpeg'},
+    {id:'s7',name:'Tropical Mango Salad',ar:'سلطة جرجير بالدجاج والمانجو',price:4.250,emoji:'🥭',desc:'Jarjir, grilled chicken breast, fresh mango, pomegranate seeds, sesame seeds & magic vegetables.',img:'images/s7.jpeg'},
+    {id:'s8',name:'Winter Salad',ar:'سلطة كرسبي',price:4.000,emoji:'🥦',desc:'Red & white cabbage, baby mixed green, carrot, cucumber — 34 Lounge special sauce, tortilla, parmesan & cilantro.',img:'images/s8.jpeg'},
+    {id:'s9',name:'Farmer Beetroot Salad',ar:'سلطة الشمندر',price:3.750,emoji:'🫐',desc:'Diced beetroot with pomegranate sauce, baby mixed green, goat cheese & crispy beetroot.',img:'images/s9.jpeg'},
+    {id:'s10',name:'Avocado Shrimp Salad',ar:'سلطة الروبيان بالأفوكادو',price:5.250,emoji:'🦐',desc:'Boiled shrimps, celery, Roman lettuce, avocado, cucumber — mustard honey sauce & cocktail sauce.',img:'images/s10.jpeg'},
+  ],
+  soup:[
+    {id:'so1',name:'Butternut Squash Soup',ar:'شوربة القرع',price:2.750,emoji:'🎃',desc:'Butternut squash, white onion, garlic & olive oil — topped with cream & crispy parsnip.',img:'images/so1.jpeg'},
+    {id:'so2',name:'Cream of Mushroom Soup',ar:'شوربة الماشروم',price:3.250,emoji:'🍄',desc:'Fresh mushroom soup with parmesan cheese & parsley.',img:'images/so2.jpeg'},
+    {id:'so3',name:'Cream of Chicken Soup',ar:'شوربة كريمة الدجاج',price:2.750,emoji:'🍗',desc:'',img:'images/so3.jpeg'},
+    {id:'so4',name:'Lentil Soup',ar:'شوربة العدس',price:2.250,emoji:'🫘',desc:'',img:'images/so4.jpeg'},
+  ],
+  mezza:[
+    {id:'m1',name:'Batata Harra',ar:'بطاطا حرّة',price:2.750,emoji:'🥔',desc:'Potato cubes with coriander & garlic.',img:'images/m1.jpg'},
+    {id:'m2',name:'Hummus',ar:'حمص',price:2.000,emoji:'🫙',desc:'Hummus, tahini, lemon & olive oil.',img:'images/m2.jpg'},
+    {id:'m3',name:'Hummus with Meat',ar:'حمص باللحمة',price:3.500,emoji:'🥩',desc:'Hummus topped with sautéed diced meat.',img:'images/m3.jpg'},
+    {id:'m4',name:'Fattoush',ar:'فتوش',price:2.500,emoji:'🥗',desc:'Tomatoes, cucumbers, lettuce, parsley, green bell peppers, toasted Arabic bread — olive oil & lemon dressing.',img:''},
+    {id:'m5',name:'Tabouleh',ar:'تبولة',price:2.250,emoji:'🌿',desc:'',img:'images/m5.jpg'},
+    {id:'m6',name:'Moutabbal',ar:'متبل باذنجان',price:2.000,emoji:'🍆',desc:'Eggplant, tahini & lemon dressing.',img:'images/m6.jpg'},
+    {id:'m7',name:'Combo Mezza Tray',ar:'صنية مقبلات كومبو',price:9.500,emoji:'🫕',desc:'Chicken liver, Hummus meat, Fattush, Batata Harra, cheese spring rolls, sambusek, filafil & kibbeh burgul — with Lebanese Bread.',img:'images/m7.jpg'},
+    {id:'m8',name:'Kibbeh — Meat',ar:'حشوة اللحم',price:2.000,emoji:'🥙',desc:'',img:'images/m8.jpeg'},
+  ],
+  appetizers:[
+    {id:'a1',name:'Potatoes Kiven',ar:'بطاط كيفن',price:5.000,emoji:'🥔',desc:'Deep-fried crispy shredded potatoes, shredded short ribs & tortilla — cloud sauce, chilantrо & chipotle.',img:'images/a1.jpeg'},
+    {id:'a2',name:'Chicken Gunn Gunn Potatoes',ar:'',price:4.250,emoji:'🍗',desc:'Julienne golden-fried potatoes, shredded oven-roast chicken, fried tortilla — with homemade medium spicy sauce & chipotle cilantro sauce.',img:'images/a2.jpeg'},
+    {id:'a3',name:'Asian Chicken',ar:'دجاج آسيوي',price:4.000,emoji:'🥡',desc:'Marinated fried chicken leg cubes in tempura batter — tossed with Asian mild sauce, chipotle sauce, in a papadam basket.',img:'images/a3.jpeg'},
+    {id:'a4',name:'Grilled Edamame',ar:'أديمامي مشوي',price:3.000,emoji:'🌿',desc:'Charcoal-grilled edamame with sauce, crispy fried leek, orange & salt flakes.',img:'images/a4.jpeg'},
+    {id:'a5',name:'Shrimp Volvo',ar:'ربيان فولفو',price:4.500,emoji:'🦐',desc:'Golden butter-fried shrimps with Volvo sauce, cilantro, chipotle & avocado.',img:'images/a5.jpeg'},
+    {id:'a6',name:'Chicken Pop',ar:'دجاج بوب',price:3.750,emoji:'🍗',desc:'Tender crispy chicken chunks — chipotle sauce, crème garlic, fried leek & cilantro.',img:'images/a6.jpeg'},
+    {id:'a7',name:'Stuffed Mushrooms',ar:'فطر محشي مقلي',price:3.750,emoji:'🍄',desc:'Fresh mushrooms stuffed with 3 kinds of cheese, breaded with panko & deep-fried.',img:'images/a7.jpeg'},
+    {id:'a8',name:'Mozzarella Sticks',ar:'أصابع الجبن',price:2.750,emoji:'🧀',desc:'Breaded golden-fried mozzarella sticks — served with fresh rocket & special sauce.',img:'images/a8.jpeg'},
+    {id:'a9',name:'Golden Cheese Fries',ar:'بطاطس الجبن الذهبية',price:3.250,emoji:'🍟',desc:'Deep-fried round-sliced homemade potatoes topped with cheddar cheese & creamy sauce.',img:'images/a9.jpeg'},
+    {id:'a10',name:'Cheesy Fries',ar:'بطاط مع الجبن',price:2.750,emoji:'🍟',desc:'French fries with yellow cheddar, jalapeño & roasted panko crumbs.',img:'images/a10.jpeg'},
+    {id:'a11',name:'Mild Spicy Cheesy Fries',ar:'بطاطا مقلية بالجبن الحارة',price:2.750,emoji:'🌶️',desc:'',img:'images/a11.jpeg'},
+    {id:'a12',name:'French Fries',ar:'بطاط كلاسيك',price:1.750,emoji:'🍟',desc:'Classic fries with cajun spice & oregano.',img:'images/a12.jpeg'},
+    {id:'a13',name:'Shrimp Tacos',ar:'سندويشات الروبيان',price:4.750,emoji:'🌮',desc:'Crispy golden fried shrimps, shredded cheese, lettuce, cabbage & cucumber rolled in tortilla with mild pink sauce.',img:'images/a13.jpeg'},
+    {id:'a14',name:'Crispy Chicken Tacos',ar:'تاكو الدجاج المقرمش',price:4.250,emoji:'🌮',desc:'Golden fried chicken slices, oven-dried tomato, shredded cheese, Roman lettuce, cabbage & cucumber — mild pink sauce in tortilla.',img:'images/a14.jpeg'},
+  ],
+  burgers:[
+    {id:'bu1',name:'Chicken Slider',ar:'سلايدر الدجاج',price:2.750,emoji:'🍔',desc:'Crispy golden fried chicken, gratin, cheddar cheese — with 34 Lounge special sauce.',img:'images/bu1.jpeg'},
+    {id:'bu2',name:'Classic Chicken Slider',ar:'دجاج سلايدر فوكادو',price:3.250,emoji:'🍔',desc:'Crispy golden fried chicken topped with avocado & yellow cheddar cheese.',img:'images/bu2.jpeg'},
+    {id:'bu3',name:'Chicken Cheese Burger',ar:'برجر دجاج',price:3.500,emoji:'🍔',desc:'',img:'images/bu3.jpeg'},
+    {id:'bu4',name:'Cheese Beef Burger',ar:'برجر مع الجبنة',price:3.750,emoji:'🍔',desc:'Beef patty, lettuce, tomatoes, mushroom sauce & cheddar cheese — served with fries.',img:'images/bu4.jpeg'},
+    {id:'bu5',name:'34 Lounge Burger',ar:'برجر 34 لاونج',price:4.750,emoji:'🍔',desc:'Beef patty, lettuce, avocado, turkey ham, cheese & caramelized onion — served with fries.',img:'images/bu5.jpeg'},
+    {id:'bu6',name:'Classic Beef Burger',ar:'برجر مع البيكن',price:4.250,emoji:'🍔',desc:'Beef patty, lettuce, onion, cheese, beef bacon & eggs — served with fries.',img:'images/bu6.jpeg'},
+  ],
+  mains:[
+    {id:'mn1',name:'Short Ribs 34',ar:'',price:9.500,emoji:'🥩',desc:'Marinated pot-roast short ribs — mashed potatoes, cheddar cheese, cola glaze sauce.',img:'images/mn1.jpeg'},
+    {id:'mn2',name:'Lamb Shank',ar:'موزة لحم',price:8.750,emoji:'🍖',desc:'Overnight marinated lamb shank — cola glaze, yogurt mint, mashed potato, boiled zucchini or carrot.',img:'images/mn2.jpeg'},
+    {id:'mn3',name:'Chicken Sizzler',ar:'دجاج سيزلر',price:5.500,emoji:'🍗',desc:'Boneless grilled half baby chicken in a sizzler pan with vegetables — choice of rice or fries.',img:'images/mn3.jpeg'},
+    {id:'mn4',name:'Fajita Shrimps',ar:'روبيان فاهيتا',price:7.500,emoji:'🦐',desc:'Shrimps marinated with homemade spices, sautéed & served on a sizzling plate — rice or fries, sour cream & avocado salsa.',img:'images/mn4.jpg'},
+    {id:'mn5',name:'German Chicken Schnitzel',ar:'',price:5.500,emoji:'🍗',desc:'Deep-fried golden chicken — mashed potatoes, citrose sauce, spring onions & micro bean.',img:'images/mn5.jpeg'},
+    {id:'mn6',name:'Fillet of Beef',ar:'لحم فيليه',price:8.750,emoji:'🥩',desc:'Grilled beef fillet — broccoli, carrot, mashed potatoes & peppercorn sauce.',img:'images/mn6.jpeg'},
+    {id:'mn7',name:'Sirloin Steak',ar:'ستيك سيرالوين',price:8.000,emoji:'🥩',desc:'Charcoal-grilled sirloin — asparagus, broccoli, carrots, Brussels sprouts, roasted potatoes, mushroom sauce.',img:'images/mn7.jpeg'},
+    {id:'mn8',name:'Chicken Breast with Mushroom Sauce',ar:'صدر دجاج مع الماشروم',price:6.500,emoji:'🍗',desc:'Charcoal-grilled chicken breast — broccoli, carrot, fennel, cherry tomato & mushroom sauce.',img:'images/mn8.jpeg'},
+    {id:'mn9',name:'Herbs Crust Salmon',ar:'سالمون هيربس',price:8.500,emoji:'🐟',desc:'Oven-baked salmon with a herb crust — julienne vegetables, asparagus, fennel & citrus sauce.',img:'images/mn9.jpeg'},
+    {id:'mn10',name:'Panko Golden Jumbo Shrimps',ar:'جمبري جامبو مقلي',price:8.750,emoji:'🦐',desc:'Breaded golden-fried jumbo shrimps with homemade pink sauce — fries & remoulade sauce.',img:'images/mn10.jpeg'},
+    {id:'mn11',name:'Butterfly Crispy Shrimps',ar:'روبيان مقلي مقرمش',price:7.000,emoji:'🦐',desc:'Breaded golden shrimps — crispy fries & remoulade sauce.',img:'images/mn11.jpeg'},
+    {id:'mn12',name:'Pink Penne',ar:'بينك باستا',price:4.000,emoji:'🍝',desc:'Penne with pink sauce, parmesan & basil. Add Chicken +1.000 · Shrimps +1.500',img:'images/mn12.jpeg'},
+    {id:'mn13',name:'Penne Alfredo',ar:'الفريدو باستا',price:4.000,emoji:'🍝',desc:'Penne with Alfredo sauce, basil oil, parmesan & oregano. Add Chicken +1.000 · Shrimps +1.500',img:'images/mn13.jpeg'},
+    {id:'mn14',name:'Penne Pesto',ar:'بيستو باستا',price:4.250,emoji:'🍝',desc:'Penne with pesto sauce, parmesan, basil oil & fresh basil.',img:'images/mn14.jpeg'},
+    {id:'mn15',name:'Traditional Lasagne',ar:'لازانيا تقليدية',price:4.750,emoji:'🫕',desc:'Pasta sheets with meat & tomato sauce, topped with mozzarella — oven baked.',img:'images/mn15.jpeg'},
+    {id:'mn16',name:'Pink Risotto',ar:'بينك رزيتو',price:4.250,emoji:'🍚',desc:'Italian arborio rice with pink sauce, basil oil & parmesan.',img:'images/mn16.jpeg'},
+    {id:'mn17',name:'Biryani Shrimps',ar:'برياني روبيان',price:5.750,emoji:'🍚',desc:'Basmati rice with traditional Indian spices & shrimps in curry sauce — cucumber yoghurt.',img:'images/mn17.jpeg'},
+    {id:'mn18',name:'Cheese Mac',ar:'معكرونة بالجبن',price:4.500,emoji:'🧀',desc:'Macaroni in béchamel sauce, cheddar & mozzarella — oven baked with panko crumbs.',img:'images/mn18.jpeg'},
+    {id:'mn19',name:'Indian Chicken Biryani',ar:'برياني دجاج هندي',price:4.750,emoji:'🍚',desc:'Basmati rice with traditional Indian spices & boneless chicken — curry sauce & cucumber yoghurt.',img:'images/mn19.jpeg'},
+    {id:'mn20',name:'Butter Chicken',ar:'دجاج بتر',price:4.750,emoji:'🍛',desc:'Traditional butter chicken — biryani rice, fried onions & cream.',img:'images/mn20.jpeg'},
+    {id:'mn21',name:'Fajita Beef',ar:'فاهيتا لحم البقر',price:7.750,emoji:'🥩',desc:'Marinated sliced beef sautéed with white onion & mixed capsicum — sizzling pan, rice or fries.',img:'images/mn21.jpg'},
+    {id:'mn22',name:'Chicken Fajita',ar:'فاهيتا الدجاج',price:6.000,emoji:'🍗',desc:'Marinated sliced chicken with onion & capsicum on a sizzler plate — rice or fries, sour cream & avocado salsa.',img:'images/mn22.jpg'},
+  ],
+  grills:[
+    {id:'g1',name:'Mixed Grill',ar:'مشاوي مشكلة',price:7.500,emoji:'🔥',desc:'Kofta, Shish Tawook, Tikka & half arayis meat — fries, garlic sauce & Lebanese bread.',img:'images/g1.jpg'},
+    {id:'g2',name:'Kofta (Kebab Meat)',ar:'كفتة',price:5.750,emoji:'🥙',desc:'2 skewers of charcoal-grilled fresh minced lamb with herbs & spices — fries, tahini sauce & Lebanese bread.',img:'images/g2.jpeg'},
+    {id:'g3',name:'Tikka (Shish Kebab)',ar:'تيكا لحم مشوي',price:6.750,emoji:'🥩',desc:'2 skewers of grilled meat cubes — fries & garlic sauce.',img:'images/g3.jpg'},
+    {id:'g4',name:'Lamb Chops',ar:'شرائح لحم الضأن',price:6.500,emoji:'🍖',desc:'Bone-in riblets marinated in spices & herbs, grilled to perfection — fries & garlic sauce.',img:'images/g4.jpeg'},
+    {id:'g5',name:'Arayis Meat',ar:'عرايس لحمة',price:4.750,emoji:'🥙',desc:'2 meat arayes — fries & garlic sauce.',img:'images/g5.jpeg'},
+    {id:'g6',name:'Shish Tawook',ar:'شيش طاووق',price:5.250,emoji:'🍗',desc:'2 skewers of tender marinated grilled chicken — fries & garlic sauce.',img:'images/g6.jpg'},
+    {id:'g7',name:'Grilled Chicken',ar:'دجاج مشوي',price:4.250,emoji:'🐔',desc:'Half grilled chicken with special marinade — fries & garlic sauce.',img:'images/g7.jpg'},
+  ],
+  pizza:[
+    {id:'p1',name:'Veggie Pizza',ar:'بيتزا خضار',price:4.250,emoji:'🍕',desc:'Homemade dough with fresh vegetables, pesto sauce & mozzarella.',img:'images/p1.jpeg'},
+    {id:'p2',name:'Pizza Pepperoni',ar:'بيتزا بيبروني',price:5.500,emoji:'🍕',desc:'Homemade dough with pepperoni & mozzarella.',img:'images/p2.jpeg'},
+    {id:'p3',name:'Special Zaatar Pizza',ar:'بيتزا زعتر المميزة',price:4.500,emoji:'🍕',desc:'Homemade dough with zaatar, tomatoes & mozzarella — topped with rocket leaves.',img:'images/p3.jpeg'},
+    {id:'p4',name:'Pizza Margarita',ar:'بيتزا مارغريتا',price:4.000,emoji:'🍕',desc:'Homemade dough with tomato sauce & mozzarella.',img:'images/p4.jpeg'},
+    {id:'p5',name:'Chicken Hawaii Pizza',ar:'بيتزا هاواي الدجاج',price:4.250,emoji:'🍕',desc:'Special dough with cajun-flavoured grilled shredded chicken, pineapple, capsicum & mozzarella.',img:'images/p5.jpeg'},
+    {id:'p6',name:'Fathayir Lebneh',ar:'فطاير لبنة',price:2.250,emoji:'🫓',desc:'Special dough topped with lebneh & olive oil.',img:'images/p6.jpeg'},
+    {id:'p7',name:'Fathayir Cheese',ar:'فطاير الجبن',price:2.500,emoji:'🫓',desc:'Special dough topped with cheese.',img:'images/p7.jpeg'},
+    {id:'p8',name:'Fathayir Zaatar',ar:'فطاير زعتر',price:2.250,emoji:'🫓',desc:'Special dough topped with zaatar.',img:'images/p8.jpeg'},
+    {id:'p9',name:'Fathayir Kashkavan',ar:'فطاير قشقوان',price:2.500,emoji:'🫓',desc:'Homemade dough with kashkavan cheese.',img:'images/p9.jpeg'},
+  ],
+  juices:[
+    {id:'j1',name:'Fresh Orange Juice',ar:'عصير برتقال',price:2.000,emoji:'🍊',desc:'',img:'images/j1.jpg'},
+    {id:'j2',name:'Strawberry Juice',ar:'عصير فراولة',price:2.250,emoji:'🍓',desc:'',img:'images/j2.jpeg'},
+    {id:'j3',name:'Fresh Pineapple Juice',ar:'عصير أناناس',price:2.250,emoji:'🍍',desc:'',img:'images/j3.jpg'},
+    {id:'j4',name:'Fresh Lemon Mint Juice',ar:'عصير ليمون نعناع',price:2.000,emoji:'🍋',desc:'',img:'images/j4.jpeg'},
+    {id:'j5',name:'Fresh Kiwi Juice',ar:'عصير كيوي',price:2.250,emoji:'🥝',desc:'',img:'images/j5.jpeg'},
+    {id:'j6',name:'Fresh Pomegranate Juice',ar:'عصير الرمان',price:2.750,emoji:'🍎',desc:'',img:'images/j6.jpeg'},
+    {id:'j7',name:'Fresh Avocado Juice',ar:'عصير أفوكادو',price:2.500,emoji:'🥑',desc:'',img:'images/j7.jpeg'},
+    {id:'j8',name:'Mango Juice',ar:'عصير المانجو',price:2.250,emoji:'🥭',desc:'',img:'images/j8.jpeg'},
+  ],
+  mocktails:[
+    {id:'mc1',name:'Piñacolada',ar:'بيناكولادا',price:2.500,emoji:'🍹',desc:'Fresh pineapple juice blended with coconut cream.',img:'images/mc1.jpeg'},
+    {id:'mc2',name:'Tropical 34 Lounge Cocktail',ar:'كوكتيل تروبيكال',price:2.500,emoji:'🍹',desc:'Orange, mango & strawberry juice with grenadine — topped with small cut fruits & ice cream.',img:'images/mc2.jpeg'},
+    {id:'mc3',name:'Cocktail Layers',ar:'كوكتيل طبقات',price:2.250,emoji:'🍹',desc:'Mango, strawberry & banana.',img:'images/mc3.jpeg'},
+    {id:'mc4',name:'Chocolate Milkshake',ar:'ميلك شيك شوكولاتة',price:2.250,emoji:'🍫',desc:'',img:''},
+    {id:'mc5',name:'Strawberry Milkshake',ar:'ميلك شيك فراولة',price:2.250,emoji:'🍓',desc:'',img:'images/mc5.jpeg'},
+    {id:'mc6',name:'Banana Milkshake',ar:'حليب بالموز',price:2.000,emoji:'🍌',desc:'',img:'images/mc6.jpeg'},
+    {id:'mc7',name:'Mango Lassi',ar:'مانجو لاسي',price:2.000,emoji:'🥭',desc:'Yogurt blended with mango juice & rose syrup.',img:'images/mc7.jpeg'},
+  ],
+  mojito:[
+    {id:'mo1',name:'Classic Mojito',ar:'موهيتو كلاسيك',price:2.250,emoji:'🍃',desc:'',img:'images/mo1.jpeg'},
+    {id:'mo2',name:'Strawberry Mojito',ar:'موجيتو فراولة',price:2.250,emoji:'🍓',desc:'',img:'images/mo2.jpeg'},
+    {id:'mo3',name:'Blackberry Mojito',ar:'موجيتو التوت الأسود',price:2.250,emoji:'🫐',desc:'',img:'images/mo3.jpeg'},
+    {id:'mo4',name:'Green Apple Mojito',ar:'موجيتو التفاح الأخضر',price:2.250,emoji:'🍏',desc:'',img:'images/mo4.jpeg'},
+    {id:'mo5',name:'Blue Sky Mojito',ar:'موجيتو بلوسكاي',price:2.250,emoji:'💙',desc:'',img:'images/mo5.jpeg'},
+    {id:'mo6',name:'Lavender Mojito',ar:'موهيتو لافندر',price:2.250,emoji:'💜',desc:'',img:'images/mo6.jpeg'},
+    {id:'mo7',name:'Passion Fruit Mojito',ar:'موهيتو فاكهة الشغف',price:2.250,emoji:'🌺',desc:'',img:'images/mo7.jpeg'},
+    {id:'mo8',name:'Lychee Mojito',ar:'موهيتو الليتشي',price:2.250,emoji:'🍈',desc:'',img:'images/mo8.jpeg'},
+    {id:'mo9',name:'Jabuticaba Mojito',ar:'موهيتو جابوتيكابا',price:2.250,emoji:'🍇',desc:'',img:'images/mo9.jpg'},
+    {id:'mo10',name:'Tropical Fruit Mojito',ar:'موهيتو فواكه',price:2.500,emoji:'🌴',desc:'',img:'images/mo10.jpeg'},
+  ],
+  'cold-bev':[
+    {id:'cb1',name:'Super — Regular / Diet',ar:'',price:1.750,emoji:'🥤',desc:'',img:''},
+    {id:'cb2',name:'Super with Choice of Sauce',ar:'',price:2.250,emoji:'🥤',desc:'',img:''},
+    {id:'cb3',name:'Iced Tea',ar:'شاي مثلج',price:2.000,emoji:'🍵',desc:'',img:''},
+    {id:'cb4',name:'Perrier',ar:'ماء بيريه',price:1.250,emoji:'💧',desc:'',img:''},
+    {id:'cb5',name:'Soft Drinks',ar:'المشروبات الغازية',price:1.000,emoji:'🥤',desc:'',img:''},
+    {id:'cb6',name:'Vimto',ar:'فيمتو',price:2.000,emoji:'🍇',desc:'',img:''},
+    {id:'cb7',name:'Mineral Water Large',ar:'ماء معدني كبير',price:1.750,emoji:'💧',desc:'',img:''},
+    {id:'cb8',name:'Mineral Water Small',ar:'ماء معدني صغير',price:1.000,emoji:'💧',desc:'',img:''},
+  ],
+  'hot-drinks':[
+    {id:'hd1',name:'Tea Pot — Small',ar:'براد شاي صغير',price:2.000,emoji:'🫖',desc:'',img:'images/hd1.jpeg'},
+    {id:'hd2',name:'Tea Pot — Large',ar:'إبريق شاي كبير',price:3.500,emoji:'🫖',desc:'',img:'images/hd2.jpeg'},
+    {id:'hd3',name:'Karak Tea — Big',ar:'كرك كبير',price:3.750,emoji:'☕',desc:'',img:'images/hd3.jpeg'},
+    {id:'hd4',name:'Karak Tea — Small',ar:'كرك صغير',price:2.250,emoji:'☕',desc:'',img:'images/hd4.jpeg'},
+    {id:'hd5',name:'Arabic Coffee Dalla',ar:'دلة القهوة العربية',price:4.500,emoji:'☕',desc:'',img:'images/hd5.jpeg'},
+    {id:'hd6',name:'French Coffee',ar:'قهوة فرنسية',price:1.500,emoji:'☕',desc:'',img:'images/hd6.jpeg'},
+    {id:'hd7',name:'Turkish Coffee',ar:'قهوة تركية',price:1.500,emoji:'☕',desc:'',img:'images/hd7.jpeg'},
+    {id:'hd8',name:'Espresso',ar:'إسبرسو',price:1.500,emoji:'☕',desc:'',img:'images/hd8.jpeg'},
+    {id:'hd9',name:'Double Espresso',ar:'إسبرسو مضاعف',price:1.750,emoji:'☕',desc:'',img:'images/hd9.jpeg'},
+    {id:'hd10',name:'Espresso Macchiato',ar:'إسبرسو ماكياتو',price:1.750,emoji:'☕',desc:'',img:'images/hd10.jpg'},
+  ],
+  sweets:[
+    {id:'sw1',name:'San Sebastian Cheesecake',ar:'تشيز كيك سان سيباستيان',price:3.750,emoji:'🍰',desc:'Crustless cheesecake with creamy interior & signature burnt top.',img:'images/sw1.jpeg'},
+    {id:'sw2',name:'Tropical Fondue',ar:'تروبكال فونده',price:5.500,emoji:'🍫',desc:'',img:'images/sw2.jpeg'},
+    {id:'sw3',name:'Molten Bueno Cake',ar:'كعكة مولتن بوينو',price:3.750,emoji:'🎂',desc:'Cocoa cake topped with Belgian caramel cocoa, Bueno sauce & chocolate sauce.',img:'images/sw3.jpeg'},
+    {id:'sw4',name:'Kunafa Choco Cheese',ar:'كنافة شوكولاتة جبن',price:4.000,emoji:'🍮',desc:'Brownie cake layers with kunafa mixture, pistachio cheese cream — Belgian chocolate sauce.',img:'images/sw4.jpeg'},
+    {id:'sw5',name:'Molten Kit Kat Cake',ar:'كعكة كيت كات مولتن',price:3.750,emoji:'🎂',desc:'Chocolate cake covered in Belgian chocolate with Kit Kat pieces & Kit Kat sauce.',img:'images/sw5.jpg'},
+    {id:'sw6',name:'Chocolate Flake Jar',ar:'برطمان رقائق الشوكولاتة',price:3.750,emoji:'🫙',desc:'Layers of cocoa cake covered with chocolate sauce & flake chocolate.',img:'images/sw6.jpeg'},
+    {id:'sw7',name:'Kinder Jar',ar:'جرة كيندر',price:3.750,emoji:'🫙',desc:'Thin cocoa cake layers with chocolate & Kinder sauce, topped with Kinder grains.',img:'images/sw7.jpeg'},
+    {id:'sw8',name:'Kinder Brownie',ar:'كيندر براوني',price:3.250,emoji:'🍫',desc:'Homemade brownie with Kinder chocolate sauce — served with ice cream & chocolate sauce.',img:'images/sw8.jpeg'},
+    {id:'sw9',name:'Brownie Symphony',ar:'سمفونية براوني',price:3.500,emoji:'🍫',desc:'Bite-sized assorted brownie cubes with a scoop of classic vanilla ice cream.',img:'images/sw9.jpeg'},
+    {id:'sw10',name:'Cake Brownie',ar:'براوني كيك',price:3.000,emoji:'🎂',desc:'Homemade special brownie — ice cream topped with chocolate sauce.',img:'images/sw10.jpeg'},
+    {id:'sw11',name:'Cocoa Cake & Kunafa Jar',ar:'كعكة الكاكاو وجرة الكنافة',price:3.750,emoji:'🫙',desc:'Chocolate cake in a jar with kunafa, pistachio sauce & chocolate sauce.',img:'images/sw11.jpeg'},
+    {id:'sw12',name:'Chocolate Lava Cake',ar:'كعكة الشوكولا',price:3.750,emoji:'🎂',desc:'',img:'images/sw12.jpg'},
+    {id:'sw13',name:'Kinder Lava Cake',ar:'كعكة كيندر لافا',price:3.750,emoji:'🎂',desc:'',img:''},
+    {id:'sw14',name:'Cheesecake — Strawberry / Kinder',ar:'تشيز كيك',price:2.750,emoji:'🍰',desc:'',img:'images/sw14.jpeg'},
+    {id:'sw15',name:'Saffron Cake',ar:'كيك زعفران',price:4.250,emoji:'🌼',desc:'Delicious saffron-flavoured cake — saffron sauce & whipped cream.',img:'images/sw15.jpeg'},
+    {id:'sw16',name:'Chocolate Dipped Strawberries',ar:'فراولة مغطاة بالشوكولاتة',price:3.000,emoji:'🍓',desc:'Fresh strawberries dipped in a choice of 3 kinds of chocolate sauce.',img:'images/sw16.jpeg'},
+    {id:'sw17',name:'Fruit Salad',ar:'سلطة فواكه',price:3.000,emoji:'🍇',desc:'Cubes of mixed fruits with ice cream.',img:'images/sw17.jpg'},
+    {id:'sw18',name:'Crêpe — Mix Fruit',ar:'كريب الفواكه',price:4.000,emoji:'🥞',desc:'',img:'images/sw18.jpeg'},
+    {id:'sw19',name:'Pancake — Big',ar:'بان كيك كبير',price:4.000,emoji:'🥞',desc:'Served with choice of Kinder, Nutella, pistachio or Belgian.',img:'images/sw19.jpeg'},
+    {id:'sw20',name:'Pancake — Small',ar:'بان كيك صغير',price:3.750,emoji:'🥞',desc:'Served with choice of Kinder, Nutella, pistachio or Belgian.',img:'images/sw20.jpeg'},
+    {id:'sw21',name:'Banana Split',ar:'انقسام الموز',price:3.250,emoji:'🍌',desc:'Caramelized banana — honey, nuts & assorted ice cream.',img:'images/sw21.jpeg'},
+    {id:'sw22',name:'Choice of Ice Cream',ar:'اختيار الآيس كريم',price:1.500,emoji:'🍦',desc:'',img:'images/sw22.jpeg'},
+  ],
+  'hot-coffee':[
+    {id:'hc1',name:'Classic Hot Latte',ar:'لاتيه ساخن',price:2.000,emoji:'☕',desc:'',img:'images/hc1.jpeg'},
+    {id:'hc2',name:'Cappuccino',ar:'كابتشينو',price:2.000,emoji:'☕',desc:'',img:'images/hc2.png'},
+    {id:'hc3',name:'Classic Hot Americano',ar:'أمريكانو ساخن',price:2.000,emoji:'☕',desc:'',img:'images/hc3.jpeg'},
+    {id:'hc4',name:'Hot Mocha Latte',ar:'لاتيه موكا ساخن',price:2.250,emoji:'☕',desc:'',img:'images/hc4.jpeg'},
+    {id:'hc5',name:'Hot Caramel Latte',ar:'لاتيه الكراميل الساخن',price:2.250,emoji:'☕',desc:'',img:'images/hc5.jpeg'},
+    {id:'hc6',name:'Hot Salt Caramel Latte',ar:'لاتيه كارميل مملح',price:2.250,emoji:'☕',desc:'',img:'images/hc6.jpeg'},
+    {id:'hc7',name:'Hot Saffron Latte',ar:'لاتيه الزعفران الساخن',price:2.250,emoji:'☕',desc:'',img:'images/hc7.jpeg'},
+    {id:'hc8',name:'Hot Rose Latte',ar:'لاتيه الورد الساخن',price:2.250,emoji:'☕',desc:'',img:'images/hc8.jpeg'},
+    {id:'hc9',name:'Hot Chocolate',ar:'شكولاتة ساخنة',price:2.250,emoji:'☕',desc:'',img:'images/hc9.jpeg'},
+    {id:'hc10',name:'Hot Coconut Latte',ar:'لاتيه جوز الهند',price:2.250,emoji:'☕',desc:'',img:'images/hc10.jpeg'},
+    {id:'hc11',name:'Spanish Latte',ar:'لاتيه إسباني',price:2.250,emoji:'☕',desc:'',img:'images/hc11.jpeg'},
+    {id:'hc12',name:'Matcha Latte',ar:'لاتيه ماتشا',price:2.250,emoji:'🍵',desc:'',img:'images/hc12.jpg'},
+  ],
+  'cold-coffee':[
+    {id:'cc1',name:'Iced Americano',ar:'أمريكانو مثلج',price:2.000,emoji:'🧋',desc:'',img:'images/cc1.jpeg'},
+    {id:'cc2',name:'Iced Spanish Latte',ar:'لاتيه إسباني مثلج',price:2.250,emoji:'🧋',desc:'',img:'images/cc2.jpg'},
+    {id:'cc3',name:'Caramel Latte',ar:'لاتيه الكراميل',price:2.250,emoji:'🧋',desc:'',img:'images/cc3.jpeg'},
+    {id:'cc4',name:'Salted Caramel Latte',ar:'لاتيه الكراميل المملح',price:2.250,emoji:'🧋',desc:'',img:'images/cc4.jpeg'},
+    {id:'cc5',name:'Hazelnut Latte',ar:'لاتيه البندق',price:2.250,emoji:'🧋',desc:'',img:'images/cc5.jpeg'},
+    {id:'cc6',name:'Rose Latte',ar:'ورود الحليب',price:2.250,emoji:'🌹',desc:'',img:'images/cc6.jpeg'},
+    {id:'cc7',name:'Saffron Latte',ar:'لاتيه الزعفران',price:2.250,emoji:'🌼',desc:'',img:'images/cc7.jpeg'},
+    {id:'cc8',name:'Mocha Latte',ar:'موكا لاتيه',price:2.250,emoji:'🧋',desc:'',img:'images/cc8.jpeg'},
+    {id:'cc9',name:'Blue Ocean',ar:'المحيط الأزرق',price:2.250,emoji:'💙',desc:'',img:'images/cc9.jpeg'},
+    {id:'cc10',name:'Frappuccino',ar:'فرابتشينو',price:2.500,emoji:'🧋',desc:'Choice of Caramel, Chocolate, Spanish etc.',img:'images/cc10.jpg'},
+    {id:'cc11',name:'Rose Frappuccino',ar:'فرابتشينو الورد',price:2.500,emoji:'🌹',desc:'',img:'images/cc11.jpg'},
+    {id:'cc12',name:'Iced Spanish Matcha',ar:'ماتشا إسباني مثلج',price:2.500,emoji:'🍵',desc:'',img:'images/cc12.jpg'},
+    {id:'cc13',name:'Iced Mango Matcha',ar:'مانجو ماتشا مثلج',price:2.500,emoji:'🥭',desc:'',img:'images/cc13.jpg'},
+    {id:'cc14',name:'Iced Strawberry Matcha',ar:'ماتشا الفراولة المثلجة',price:2.500,emoji:'🍓',desc:'',img:'images/cc14.jpg'},
+    {id:'cc15',name:'Affogato Coffee',ar:'افوكاتو',price:2.250,emoji:'🍦',desc:'2 scoops of vanilla ice cream drowned in a shot of hot espresso.',img:'images/cc15.jpg'},
+  ],
+  celebration:[
+    {id:'cel1',name:'Birthday Table for 2',ar:'طاولة الاحتفال لشخصين',price:20.000,emoji:'🎂',desc:'Celebration table for 2 persons — flower petals, candles, cake, sparkling juice or Arabic coffee.',img:'images/cel1.jpg'},
+    {id:'cel2',name:'Birthday Table for 5–6',ar:'طاولة عيد الميلاد',price:35.000,emoji:'🎉',desc:'Birthday table for 5–6 persons — flower petals, candles, cake of choice, sparkling juice & Arabic coffee.',img:'images/cel2.jpg'},
+    {id:'cel3',name:'Premium Birthday Table',ar:'طاولة عيد ميلاد مميزة',price:48.000,badge:'Premium',emoji:'✨',desc:'Specially decorated table for 4–6 persons — fresh flower petals, candles, balloons, Chocolate & Red Velvet cake, sparkling grape juice & Arabic coffee.',img:'images/cel3.jpg'},
+  ]
+};
+
+const CAT_LABELS = {
+  breakfast:'Breakfast',salad:'Salads',soup:'Soups',mezza:'Mezza',
+  appetizers:'Appetizers',burgers:'Burgers',mains:'Mains',grills:'Grills',
+  pizza:'Pizza',juices:'Juices',mocktails:'Mocktails',mojito:'Mojito',
+  'cold-bev':'Cold Drinks','hot-drinks':'Hot Drinks',sweets:'Sweets',
+  'hot-coffee':'Hot Coffee','cold-coffee':'Cold Coffee',celebration:'Celebration'
+};
+
+/* ════════════════════════════
+   STATE
+════════════════════════════ */
+let allItems = [];
+let currentEditId = null, currentEditCat = null;
+let currentMenuFilter = 'all', currentImgFilter = 'all';
+let activityLog = [];
+let newItemImgData = '';
+
+function buildAllItems() {
+  allItems = [];
+  Object.keys(MENU).forEach(cat => {
+    MENU[cat].forEach(item => allItems.push({...item, category: cat}));
+  });
+  // Merge custom items from localStorage
+  const custom = JSON.parse(localStorage.getItem('34custom_items') || '[]');
+  custom.forEach(item => {
+    if (!allItems.find(i => i.id === item.id)) allItems.push(item);
+  });
+}
+
+function getImg(id) {
+  return localStorage.getItem('img_' + id) || '';
+}
+
+function esc(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function imgCardFallback(el, emoji) {
+  el.parentElement.innerHTML = `<div class="img-card-thumb-ph">${emoji}</div>`;
+}
+
+/* ════════════════════════════
+   NAVIGATION
+════════════════════════════ */
+function switchPane(pane, el) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('pane-' + pane).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('topbarTitle').textContent = el ? el.textContent.trim() : pane;
+
+  if (pane === 'dashboard') renderDashboard();
+  if (pane === 'menu-items') renderMenuTable();
+  if (pane === 'images') renderImgManager();
+  if (pane === 'add-item') populateCatSelect();
+}
+
+/* ════════════════════════════
+   CLOCK
+════════════════════════════ */
+function updateClock() {
+  const now = new Date();
+  document.getElementById('liveClock').textContent =
+    now.toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ════════════════════════════
+   DASHBOARD
+════════════════════════════ */
+function renderDashboard() {
+  buildAllItems();
+  const total = allItems.length;
+  const withImg = allItems.filter(i => getImg(i.id)).length;
+  const noImg = total - withImg;
+  const cats = Object.keys(MENU).length;
+  const avgPrice = (allItems.reduce((s,i)=>s+i.price,0)/total).toFixed(3);
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card gold">
+      <div class="stat-label">Total Items</div>
+      <div class="stat-value">${total}</div>
+      <div class="stat-sub">across ${cats} categories</div>
+      <div class="stat-icon">🍽</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">With Images</div>
+      <div class="stat-value">${withImg}</div>
+      <div class="stat-sub">${Math.round(withImg/total*100)}% coverage</div>
+      <div class="stat-icon">📸</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-label">Missing Images</div>
+      <div class="stat-value">${noImg}</div>
+      <div class="stat-sub">need photos uploaded</div>
+      <div class="stat-icon">⚠️</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Avg Price</div>
+      <div class="stat-value" style="font-size:1.4rem">KWD ${avgPrice}</div>
+      <div class="stat-sub">across all items</div>
+      <div class="stat-icon">💰</div>
+    </div>
+  `;
+
+  // Category breakdown
+  const bd = document.getElementById('catBreakdown');
+  bd.innerHTML = Object.keys(MENU).map(cat => {
+    const items = MENU[cat];
+    const imgCount = items.filter(i => getImg(i.id)).length;
+    const pct = Math.round(imgCount/items.length*100);
+    return `<div style="background:var(--dark2);padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between;gap:.8rem">
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.1em;color:var(--gold)">${CAT_LABELS[cat]}</div>
+        <div style="font-size:.78rem;color:var(--cream-dim);margin-top:.1rem">${items.length} items · ${imgCount} photos</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Cinzel',serif;font-size:.75rem;color:${pct===100?'var(--green)':pct>50?'var(--gold)':'var(--red)'}">${pct}%</div>
+        <div style="width:60px;height:4px;background:var(--dark4);margin-top:.3rem;border-radius:2px">
+          <div style="width:${pct}%;height:100%;background:${pct===100?'var(--green)':pct>50?'var(--gold)':'var(--red)'};border-radius:2px;transition:width .5s"></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Missing images list
+  const missing = allItems.filter(i => !getImg(i.id)).slice(0, 10);
+  const mList = document.getElementById('missingImgList');
+  if (!missing.length) {
+    mList.innerHTML = '<div class="activity-item"><div class="activity-dot green"></div><div class="activity-info"><div class="activity-title">All items have images! ✓</div></div></div>';
+  } else {
+    mList.innerHTML = missing.map(i => `
+      <div class="activity-item">
+        <div class="activity-dot red"></div>
+        <div class="activity-info">
+          <div class="activity-title">${esc(i.name)}</div>
+          <div class="activity-time">${esc(CAT_LABELS[i.category] || i.category)} · ID: ${esc(i.id)}</div>
+        </div>
+        <button class="act-btn success" onclick="quickUploadFor('${i.id}','${i.category}')">📷 Upload</button>
+      </div>`).join('');
+  }
+}
+
+function refreshStats() { renderDashboard(); showToast('Stats refreshed'); }
+
+/* ════════════════════════════
+   MENU TABLE
+════════════════════════════ */
+function renderMenuTable() {
+  buildAllItems();
+  // Build cat filters
+  const filterBar = document.getElementById('menuCatFilter');
+  filterBar.innerHTML = `<button class="cat-filter-btn ${currentMenuFilter==='all'?'active':''}" onclick="setMenuFilter('all',this)">All (${allItems.length})</button>` +
+    Object.keys(MENU).map(cat =>
+      `<button class="cat-filter-btn ${currentMenuFilter===cat?'active':''}" onclick="setMenuFilter('${cat}',this)">${CAT_LABELS[cat]} (${MENU[cat].length})</button>`
+    ).join('');
+  filterMenuTable();
+}
+
+function setMenuFilter(cat, el) {
+  currentMenuFilter = cat;
+  document.querySelectorAll('#menuCatFilter .cat-filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  filterMenuTable();
+}
+
+function filterMenuTable() {
+  buildAllItems();
+  const q = (document.getElementById('menuSearch')?.value || '').toLowerCase().trim();
+  let items = currentMenuFilter === 'all' ? allItems : allItems.filter(i => i.category === currentMenuFilter);
+  if (q) items = items.filter(i =>
+    i.name.toLowerCase().includes(q) || (i.ar && i.ar.includes(q)) || (i.desc && i.desc.toLowerCase().includes(q)) || i.id.includes(q)
+  );
+
+  const tbody = document.getElementById('menuTableBody');
+  if (!items.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gold-dim);font-style:italic">No items found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = items.map(item => {
+    const imgSrc = getImg(item.id) || item.img || '';
+    const thumb = imgSrc
+      ? `<img class="item-thumb" src="${imgSrc}" alt="${esc(item.name)}" onerror="this.style.display='none'">`
+      : `<div class="item-thumb-ph">${item.emoji||'🍽'}</div>`;
+    const badge = item.badge
+      ? `<span class="badge-pill ${item.badge==='Premium'?'premium':'new'}">${esc(item.badge)}</span>`
+      : `<span style="color:var(--gold-dim);font-size:.72rem">—</span>`;
+    return `<tr id="row-${esc(item.id)}">
+      <td>${thumb}</td>
+      <td><div class="item-name-cell">${esc(item.name)}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--gold-dim);margin-top:.2rem">${esc(item.id)}</div></td>
+      <td><div class="item-ar-cell">${esc(item.ar)||'—'}</div></td>
+      <td><span style="font-family:'Cinzel',serif;font-size:.58rem;color:var(--cream-dim)">${esc(CAT_LABELS[item.category]||item.category)}</span></td>
+      <td><div class="price-cell">KWD ${item.price.toFixed(3)}</div></td>
+      <td>${badge}</td>
+      <td>
+        <div class="action-btns">
+          <button class="act-btn" onclick="openEditModal('${item.id}','${item.category}')">✏ Edit</button>
+          <label class="act-btn success" style="cursor:pointer">📷 Img<input type="file" accept="image/*" style="display:none" onchange="quickImgUpload(event,'${item.id}')"/></label>
+          <button class="act-btn danger" onclick="confirmDelete('${item.id}','${item.category}')">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ════════════════════════════
+   EDIT MODAL
+════════════════════════════ */
+function openEditModal(id, category) {
+  const item = allItems.find(i => i.id === id);
+  if (!item) return;
+  currentEditId = id; currentEditCat = category;
+  document.getElementById('editModalTitle').textContent = `Edit: ${item.name}`;
+  document.getElementById('edit-name').value = item.name;
+  document.getElementById('edit-ar').value = item.ar || '';
+  document.getElementById('edit-price').value = item.price;
+  document.getElementById('edit-badge').value = item.badge || '';
+  document.getElementById('edit-emoji').value = item.emoji || '';
+  document.getElementById('edit-desc').value = item.desc || '';
+  const imgSrc = getImg(id) || item.img || '';
+  const preview = document.getElementById('edit-img-preview');
+  if (imgSrc) { preview.src = imgSrc; preview.classList.add('show'); }
+  else { preview.classList.remove('show'); }
+  document.getElementById('editOverlay').classList.add('open');
+  document.getElementById('editModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEditModal() {
+  document.getElementById('editOverlay').classList.remove('open');
+  document.getElementById('editModal').classList.remove('open');
+  document.body.style.overflow = '';
+  currentEditId = null; currentEditCat = null;
+}
+
+function handleEditImg(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('edit-img-preview');
+    preview.src = e.target.result; preview.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveEditItem() {
+  if (!currentEditId) return;
+  const item = allItems.find(i => i.id === currentEditId);
+  if (!item) return;
+
+  // Update in MENU if it's an original item
+  const menuItem = MENU[currentEditCat] && MENU[currentEditCat].find(i => i.id === currentEditId);
+  const target = menuItem || item;
+  target.name = document.getElementById('edit-name').value;
+  target.ar = document.getElementById('edit-ar').value;
+  target.price = parseFloat(document.getElementById('edit-price').value) || target.price;
+  target.badge = document.getElementById('edit-badge').value || undefined;
+  target.emoji = document.getElementById('edit-emoji').value || target.emoji;
+  target.desc = document.getElementById('edit-desc').value;
+
+  // Save image if new one was selected
+  const file = document.getElementById('edit-img-input').files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      localStorage.setItem('img_' + currentEditId, e.target.result);
+      saveChangesAndClose();
+    };
+    reader.readAsDataURL(file);
+  } else {
+    saveChangesAndClose();
+  }
+}
+
+function saveChangesAndClose() {
+  logActivity('green', `Edited: ${MENU[currentEditCat]?.find(i=>i.id===currentEditId)?.name || currentEditId}`, 'Menu Items');
+  showToast('✓ Changes saved', 'success');
+  closeEditModal();
+  filterMenuTable();
+}
+
+function deleteItem() {
+  if (!currentEditId) return;
+  if (!confirm(`Delete "${MENU[currentEditCat]?.find(i=>i.id===currentEditId)?.name || currentEditId}"? This cannot be undone.`)) return;
+  // Remove from MENU
+  if (MENU[currentEditCat]) {
+    const idx = MENU[currentEditCat].findIndex(i => i.id === currentEditId);
+    if (idx > -1) MENU[currentEditCat].splice(idx, 1);
+  }
+  localStorage.removeItem('img_' + currentEditId);
+  logActivity('red', `Deleted item: ${currentEditId}`, 'Menu Items');
+  showToast('Item deleted', 'danger');
+  closeEditModal();
+  filterMenuTable();
+  renderDashboard();
+}
+
+function confirmDelete(id, cat) {
+  const item = MENU[cat]?.find(i => i.id === id);
+  if (!item) return;
+  if (!confirm(`Delete "${item.name}"?`)) return;
+  const idx = MENU[cat].findIndex(i => i.id === id);
+  if (idx > -1) MENU[cat].splice(idx, 1);
+  localStorage.removeItem('img_' + id);
+  logActivity('red', `Deleted: ${item.name}`, 'Menu Items');
+  showToast('Deleted', 'danger');
+  filterMenuTable();
+}
+
+/* ════════════════════════════
+   QUICK IMAGE UPLOAD
+════════════════════════════ */
+function quickImgUpload(event, id) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    localStorage.setItem('img_' + id, e.target.result);
+    logActivity('green', `Image uploaded for: ${id}`, 'Images');
+    showToast('✓ Image saved for ' + id, 'success');
+    filterMenuTable();
+  };
+  reader.readAsDataURL(file);
+}
+
+function quickUploadFor(id, category) {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = e => quickImgUpload(e, id);
+  input.click();
+}
+
+/* ════════════════════════════
+   IMAGE MANAGER
+════════════════════════════ */
+function renderImgManager() {
+  buildAllItems();
+  const filterBar = document.getElementById('imgCatFilter');
+  filterBar.innerHTML = `<button class="cat-filter-btn ${currentImgFilter==='all'?'active':''}" onclick="setImgFilter('all',this)">All</button>` +
+    Object.keys(MENU).map(cat =>
+      `<button class="cat-filter-btn ${currentImgFilter===cat?'active':''}" onclick="setImgFilter('${cat}',this)">${CAT_LABELS[cat]}</button>`
+    ).join('');
+
+  renderImgGrid();
+}
+
+function setImgFilter(cat, el) {
+  currentImgFilter = cat;
+  document.querySelectorAll('#imgCatFilter .cat-filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderImgGrid();
+}
+
+function renderImgGrid() {
+  buildAllItems();
+  const items = currentImgFilter === 'all' ? allItems : allItems.filter(i => i.category === currentImgFilter);
+  const grid = document.getElementById('imgGrid');
+  grid.innerHTML = items.map(item => {
+    const imgSrc = getImg(item.id) || item.img || '';
+    const thumb = imgSrc
+      ? `<div class="img-card-thumb">
+          <img src="${imgSrc}" alt="${esc(item.name)}" onerror="imgCardFallback(this,'${item.emoji}')"/>
+          <span class="has-img-badge">✓ Photo</span>
+         </div>`
+      : `<div class="img-card-thumb"><div class="img-card-thumb-ph">${item.emoji}<small>NO IMAGE</small></div></div>`;
+    return `<div class="img-card">
+      ${thumb}
+      <div class="img-card-info">
+        <div class="img-card-id">${esc(item.id)}</div>
+        <div class="img-card-name">${esc(item.name)}</div>
+        <div class="img-card-actions">
+          <label class="img-upload-label">
+            ${imgSrc ? '📷 Replace' : '📷 Upload'}
+            <input type="file" accept="image/*" onchange="imgManagerUpload(event,'${item.id}')"/>
+          </label>
+          ${imgSrc ? `<button class="img-clear-btn" onclick="clearImg('${item.id}')" title="Remove image">✕</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function imgManagerUpload(event, id) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    localStorage.setItem('img_' + id, e.target.result);
+    logActivity('green', `Image set for: ${id}`, 'Images');
+    showToast('✓ Image saved for ' + id, 'success');
+    renderImgGrid();
+    renderDashboard();
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImg(id) {
+  localStorage.removeItem('img_' + id);
+  logActivity('red', `Image cleared for: ${id}`, 'Images');
+  showToast('Image removed', 'danger');
+  renderImgGrid();
+}
+
+function clearAllImages() {
+  if (!confirm('Remove ALL uploaded images? This cannot be undone.')) return;
+  Object.keys(localStorage).filter(k => k.startsWith('img_')).forEach(k => localStorage.removeItem(k));
+  logActivity('red', 'All images cleared', 'Images');
+  showToast('All images cleared', 'danger');
+  renderImgGrid();
+  renderDashboard();
+}
+
+function bulkUpload() {
+  alert('Bulk Image Upload Guide:\n\n1. Name your photos by item ID:\n   b1.jpg, s1.jpg, g1.jpg, etc.\n\n2. Place them in an "images/" folder next to this HTML file.\n\n3. In the MENU data in index.html, set:\n   img: "images/b1.jpg"\n   for each item.\n\nOR: Use the Upload buttons on each card here to save images directly to this device without any folder setup.');
+}
+
+/* ════════════════════════════
+   ADD NEW ITEM
+════════════════════════════ */
+function populateCatSelect() {
+  const sel = document.getElementById('new-cat');
+  sel.innerHTML = Object.keys(CAT_LABELS).map(c => `<option value="${c}">${CAT_LABELS[c]}</option>`).join('');
+}
+
+function previewAddImg(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    newItemImgData = e.target.result;
+    const preview = document.getElementById('newItemPreview');
+    preview.src = e.target.result; preview.classList.add('show');
+    document.getElementById('newItemImgZone').querySelector('p').textContent = 'Image ready ✓';
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveNewItem() {
+  const id = document.getElementById('new-id').value.trim();
+  const cat = document.getElementById('new-cat').value;
+  const name = document.getElementById('new-name').value.trim();
+  const price = parseFloat(document.getElementById('new-price').value);
+
+  if (!id || !name || !cat || isNaN(price)) {
+    showToast('Fill in ID, Name, Category & Price', 'danger'); return;
+  }
+  if (!/^[a-zA-Z0-9_-]+$/.test(id)) {
+    showToast('ID may only contain letters, numbers, - and _', 'danger'); return;
+  }
+  if (allItems.find(i => i.id === id)) {
+    showToast('ID already exists — choose another', 'danger'); return;
+  }
+
+  const newItem = {
+    id, name, category: cat,
+    ar: document.getElementById('new-ar').value,
+    price,
+    badge: document.getElementById('new-badge').value || undefined,
+    emoji: document.getElementById('new-emoji').value || '🍽',
+    desc: document.getElementById('new-desc').value,
+    img: '',
+  };
+
+  if (!MENU[cat]) MENU[cat] = [];
+  MENU[cat].push(newItem);
+  if (newItemImgData) localStorage.setItem('img_' + id, newItemImgData);
+
+  // Save to custom list
+  const custom = JSON.parse(localStorage.getItem('34custom_items') || '[]');
+  custom.push(newItem);
+  localStorage.setItem('34custom_items', JSON.stringify(custom));
+
+  logActivity('gold', `New item added: ${name}`, CAT_LABELS[cat]);
+  showToast('✓ Item added to menu!', 'success');
+  resetAddForm();
+  buildAllItems();
+}
+
+function resetAddForm() {
+  ['new-id','new-name','new-ar','new-price','new-desc','new-emoji'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('new-badge').value = '';
+  document.getElementById('newItemPreview').classList.remove('show');
+  document.getElementById('newItemImgZone').querySelector('p').textContent = 'Click to upload image';
+  newItemImgData = '';
+}
+
+/* ════════════════════════════
+   SETTINGS
+════════════════════════════ */
+function saveSettings() {
+  const settings = {
+    name: document.getElementById('set-name').value,
+    phone: document.getElementById('set-phone').value,
+    location: document.getElementById('set-location').value,
+    currency: document.getElementById('set-currency').value,
+    showAr: document.getElementById('set-showAr').checked,
+    showPh: document.getElementById('set-showPh').checked,
+    modal: document.getElementById('set-modal').checked,
+    wa: document.getElementById('set-wa').checked,
+  };
+  localStorage.setItem('34settings', JSON.stringify(settings));
+  logActivity('blue', 'Settings saved', 'Settings');
+  showToast('✓ Settings saved', 'success');
+}
+
+function resetCustomItems() {
+  if (!confirm('Remove all custom-added items? Original menu items are not affected.')) return;
+  localStorage.removeItem('34custom_items');
+  buildAllItems();
+  logActivity('red', 'Custom items reset', 'Settings');
+  showToast('Custom items cleared', 'danger');
+}
+
+// Load settings on init
+function loadSettings() {
+  const s = JSON.parse(localStorage.getItem('34settings') || '{}');
+  if (s.name) document.getElementById('set-name').value = s.name;
+  if (s.phone) document.getElementById('set-phone').value = s.phone;
+  if (s.location) document.getElementById('set-location').value = s.location;
+  if (s.currency) document.getElementById('set-currency').value = s.currency;
+  if (s.showAr !== undefined) document.getElementById('set-showAr').checked = s.showAr;
+  if (s.showPh !== undefined) document.getElementById('set-showPh').checked = s.showPh;
+  if (s.modal !== undefined) document.getElementById('set-modal').checked = s.modal;
+  if (s.wa !== undefined) document.getElementById('set-wa').checked = s.wa;
+}
+
+/* ════════════════════════════
+   ACTIVITY LOG
+════════════════════════════ */
+function logActivity(color, title, meta) {
+  const now = new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  activityLog.unshift({color, title, meta, time: now});
+  const log = document.getElementById('activityLog');
+  log.innerHTML = activityLog.map(a => `
+    <div class="activity-item">
+      <div class="activity-dot ${a.color}"></div>
+      <div class="activity-info">
+        <div class="activity-title">${esc(a.title)}</div>
+        <div class="activity-time">${a.time}</div>
+      </div>
+      <div class="activity-meta">${esc(a.meta)}</div>
+    </div>`).join('');
+}
+
+function clearLog() {
+  activityLog = [];
+  document.getElementById('activityLog').innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>Log cleared</p></div>';
+}
+
+/* ════════════════════════════
+   EXPORT
+════════════════════════════ */
+function exportData() {
+  const custom = JSON.parse(localStorage.getItem('34custom_items') || '[]');
+  const data = {
+    exported: new Date().toISOString(),
+    restaurant: '34 Lounge',
+    custom_items: custom,
+    image_count: Object.keys(localStorage).filter(k => k.startsWith('img_')).length,
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '34lounge_export_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  logActivity('blue', 'Data exported', 'Export');
+  showToast('Export downloaded');
+}
+
+/* ════════════════════════════
+   TOAST
+════════════════════════════ */
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('boToast');
+  t.textContent = msg;
+  t.className = 'bo-toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ════════════════════════════
+   MOBILE SIDEBAR
+════════════════════════════ */
+function toggleMobSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('mobOverlay').classList.toggle('open');
+}
+function closeMobSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobOverlay').classList.remove('open');
+}
+
+/* ════════════════════════════
+   DEEP LINK — hash routing
+════════════════════════════ */
+function handleHash() {
+  const hash = location.hash;
+  if (hash.startsWith('#item-')) {
+    const id = hash.replace('#item-', '');
+    switchPane('menu-items', document.querySelector('[data-pane="menu-items"]'));
+    setTimeout(() => {
+      buildAllItems();
+      filterMenuTable();
+      const item = allItems.find(i => i.id === id);
+      if (item) {
+        openEditModal(id, item.category);
+        const row = document.getElementById('row-' + id);
+        if (row) row.scrollIntoView({behavior:'smooth', block:'center'});
+      }
+    }, 300);
+  }
+}
+
+/* ════════════════════════════
+   AUTH
+════════════════════════════ */
+const ADMIN_HASH = '896669b5fbb0b32899784ba5e3e76f93b915b79d1c9b2988322085278bad49c7';
+const AUTH_KEY = '34admin_auth';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function tryLogin() {
+  const pwInput = document.getElementById('loginPw');
+  const err = document.getElementById('loginErr');
+  const hash = await sha256(pwInput.value);
+  if (hash === ADMIN_HASH) {
+    localStorage.setItem(AUTH_KEY, ADMIN_HASH);
+    showApp();
+  } else {
+    err.style.display = 'block';
+    pwInput.value = '';
+    pwInput.focus();
+  }
+}
+
+function logout() {
+  localStorage.removeItem(AUTH_KEY);
+  location.reload();
+}
+
+function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('boLayout').style.display = '';
+  initApp();
+}
+
+function checkAuth() {
+  if (localStorage.getItem(AUTH_KEY) === ADMIN_HASH) {
+    showApp();
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('loginPw').focus();
+  }
+}
+
+/* ════════════════════════════
+   INIT
+════════════════════════════ */
+function initApp() {
+  buildAllItems();
+  loadSettings();
+  renderDashboard();
+  populateCatSelect();
+  handleHash();
+}
+window.addEventListener('hashchange', handleHash);
+checkAuth();
+
+// ESC closes modals
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeEditModal();
+    closeMobSidebar();
+  }
+});
+</script>
+</body>
+</html>

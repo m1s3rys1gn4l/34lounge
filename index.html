@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>34 Lounge — Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:#7a5f28; --gold-pale:rgba(201,168,76,.09);
+  --dark:#0e0c09; --dark2:#161410; --dark3:#1f1c17; --dark4:#2a261e;
+  --cream:#f5eed8; --cream-dim:#c4b98a; --white:#fdf8ef;
+  --border:rgba(201,168,76,.18); --radius:0px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:130px}
+body{background:var(--dark);color:var(--cream);font-family:'Cormorant Garamond',Georgia,serif;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;opacity:.35}
+
+/* ══ HEADER ══ */
+.site-header{position:sticky;top:0;z-index:500;background:rgba(14,12,9,.97);border-bottom:1px solid var(--border);backdrop-filter:blur(14px)}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:.9rem 2rem;gap:1rem}
+.logo{font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;color:var(--gold-light);letter-spacing:.08em;text-decoration:none;flex-shrink:0}
+.logo small{display:block;font-size:.5rem;letter-spacing:.35em;color:var(--cream-dim);font-weight:400;margin-top:.1rem}
+
+/* Search */
+.search-wrap{flex:1;max-width:420px;position:relative}
+.search-wrap input{width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--cream);padding:.6rem 2.5rem .6rem 1rem;font-family:'Cormorant Garamond',serif;font-size:.95rem;outline:none;transition:border-color .2s}
+.search-wrap input:focus{border-color:var(--gold)}
+.search-wrap input::placeholder{color:var(--gold-dim);font-style:italic}
+.search-icon{position:absolute;right:.8rem;top:50%;transform:translateY(-50%);color:var(--gold-dim);font-size:1rem;pointer-events:none}
+.search-results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--dark3);border:1px solid var(--border);z-index:600;max-height:320px;overflow-y:auto;display:none}
+.search-results.open{display:block}
+.sr-item{display:flex;align-items:center;gap:.8rem;padding:.7rem 1rem;cursor:pointer;border-bottom:1px solid rgba(201,168,76,.07);transition:background .15s}
+.sr-item:hover{background:var(--dark4)}
+.sr-img{width:42px;height:42px;object-fit:cover;background:var(--dark4);flex-shrink:0}
+.sr-img-ph{width:42px;height:42px;background:var(--dark4);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.sr-name{font-size:.9rem;color:var(--cream);line-height:1.3}
+.sr-price{font-family:'Cinzel',serif;font-size:.65rem;color:var(--gold);margin-top:.1rem}
+
+/* Header right */
+.header-actions{display:flex;align-items:center;gap:.8rem;flex-shrink:0}
+.hdr-btn{background:none;border:1px solid var(--border);color:var(--cream-dim);padding:.5rem .9rem;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem}
+.hdr-btn:hover{border-color:var(--gold);color:var(--gold)}
+.hdr-btn.primary{background:var(--gold);color:var(--dark);border-color:var(--gold)}
+.hdr-btn.primary:hover{background:var(--gold-light)}
+.cart-btn{position:relative}
+.cart-count{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--gold);color:var(--dark);border-radius:50%;font-size:.55rem;font-family:'Cinzel',serif;display:flex;align-items:center;justify-content:center;font-weight:700;display:none}
+.cart-count.show{display:flex}
+
+/* Hamburger mobile */
+.ham{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:.4rem;background:none;border:none}
+.ham span{display:block;width:22px;height:2px;background:var(--gold-dim);transition:all .3s}
+
+/* ══ NAV BAR ══ */
+.cat-nav{border-top:1px solid var(--border);background:rgba(14,12,9,.95)}
+.cat-nav-inner{display:flex;overflow-x:auto;scrollbar-width:none;padding:0 1rem}
+.cat-nav-inner::-webkit-scrollbar{display:none}
+.cat-item{flex-shrink:0;padding:.75rem 1rem;font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cream-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;user-select:none}
+.cat-item:hover{color:var(--gold-light)}
+.cat-item.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* ══ HERO SWIPER ══ */
+.hero-swiper{position:relative;height:92vh;min-height:520px;overflow:hidden}
+.swiper-track{display:flex;height:100%;transition:transform .7s cubic-bezier(.77,0,.175,1)}
+.slide{min-width:100%;height:100%;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.slide-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 8s ease;filter:brightness(.45)}
+.slide.active .slide-bg{transform:scale(1.06)}
+.slide-content{position:relative;z-index:2;text-align:center;padding:2rem;max-width:700px}
+.slide-badge{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;animation:fadeUp .8s ease both}
+.slide-title{font-family:'Cinzel',serif;font-size:clamp(2rem,6vw,4.5rem);font-weight:700;color:var(--white);line-height:1.05;margin-bottom:.8rem;animation:fadeUp .9s .1s ease both;text-shadow:0 4px 40px rgba(0,0,0,.7)}
+.slide-sub{font-size:clamp(1rem,2.5vw,1.3rem);font-style:italic;color:var(--cream-dim);margin-bottom:2rem;animation:fadeUp .9s .2s ease both}
+.slide-cta{display:inline-flex;gap:1rem;flex-wrap:wrap;justify-content:center;animation:fadeUp .9s .3s ease both}
+.slide-btn{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;padding:.85rem 2rem;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+.slide-btn.primary{background:var(--gold);color:var(--dark)}
+.slide-btn.primary:hover{background:var(--gold-light);transform:translateY(-2px)}
+.slide-btn.outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.4)}
+.slide-btn.outline:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Swiper controls */
+.swiper-prev,.swiper-next{position:absolute;top:50%;transform:translateY(-50%);z-index:10;background:rgba(14,12,9,.5);border:1px solid var(--border);color:var(--gold);width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;transition:all .2s;backdrop-filter:blur(4px)}
+.swiper-prev{left:1.5rem}.swiper-next{right:1.5rem}
+.swiper-prev:hover,.swiper-next:hover{background:var(--gold);color:var(--dark);border-color:var(--gold)}
+.swiper-dots{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;z-index:10}
+.swiper-dot{width:6px;height:6px;border-radius:50%;background:rgba(201,168,76,.4);cursor:pointer;transition:all .3s}
+.swiper-dot.active{background:var(--gold);width:22px;border-radius:3px}
+
+/* ══ SECTION ══ */
+.section{max-width:960px;margin:0 auto;padding:4rem 1.5rem 2rem}
+.section-header{display:flex;align-items:center;gap:1.2rem;margin-bottom:2.5rem}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.sec-line.r{background:linear-gradient(270deg,var(--gold-dim),transparent)}
+.sec-title{font-family:'Cinzel',serif;font-size:clamp(1.1rem,3vw,1.6rem);font-weight:600;color:var(--gold-light);letter-spacing:.06em;text-align:center}
+.sec-title-ar{font-family:'Noto Naskh Arabic',serif;font-size:.85rem;color:var(--cream-dim);direction:rtl;text-align:center;margin-top:.15rem}
+.sec-divider{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:1rem;padding:0 1.5rem}
+.sec-div-line{flex:1;height:1px;background:rgba(201,168,76,.1)}
+.sec-div-diamond{width:6px;height:6px;background:var(--gold-dim);transform:rotate(45deg);flex-shrink:0}
+
+/* ══ ITEM GRID ══ */
+.item-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--border)}
+.item-card{background:var(--dark2);cursor:pointer;transition:background .2s;position:relative;display:flex;flex-direction:column}
+.item-card:hover{background:var(--dark3)}
+.item-img-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--dark3)}
+.item-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;display:block}
+.item-card:hover .item-img-wrap img{transform:scale(1.05)}
+.item-img-ph{width:100%;aspect-ratio:4/3;background:var(--dark3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;color:var(--gold-dim);font-size:2rem}
+.item-img-ph small{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-dim);opacity:.6}
+.item-badge{position:absolute;top:.6rem;left:.6rem;font-family:'Cinzel',serif;font-size:.45rem;letter-spacing:.15em;text-transform:uppercase;background:var(--gold);color:var(--dark);padding:.2rem .5rem}
+.item-body{padding:1.1rem;flex:1;display:flex;flex-direction:column}
+.item-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--white);line-height:1.3;margin-bottom:.1rem}
+.item-name-ar{font-family:'Noto Naskh Arabic',serif;font-size:.8rem;color:var(--gold-dim);direction:rtl;margin-bottom:.4rem}
+.item-desc{font-size:.78rem;color:var(--cream-dim);line-height:1.55;font-style:italic;margin-bottom:.8rem;flex:1;opacity:.8}
+.item-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+.item-price{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.08em;color:var(--gold)}
+.add-btn{background:var(--gold);color:var(--dark);border:none;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer;transition:all .2s;flex-shrink:0}
+.add-btn:hover{background:var(--gold-light);transform:scale(1.1)}
+
+/* ══ CART DRAWER ══ */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:800;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+.cart-overlay.open{opacity:1;pointer-events:all}
+.cart-drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100vw);background:var(--dark2);border-left:1px solid var(--border);z-index:801;transform:translateX(100%);transition:transform .35s cubic-bezier(.77,0,.175,1);display:flex;flex-direction:column}
+.cart-drawer.open{transform:none}
+.cart-header{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cart-title{font-family:'Cinzel',serif;font-size:.9rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+.cart-close{background:none;border:none;color:var(--cream-dim);font-size:1.4rem;cursor:pointer;transition:color .2s}
+.cart-close:hover{color:var(--gold)}
+.cart-items{flex:1;overflow-y:auto;padding:1rem}
+.cart-empty{text-align:center;padding:3rem 1rem;color:var(--gold-dim);font-style:italic}
+.cart-item{display:flex;gap:.8rem;padding:.9rem 0;border-bottom:1px solid rgba(201,168,76,.07)}
+.ci-img{width:56px;height:56px;object-fit:cover;flex-shrink:0;background:var(--dark3)}
+.ci-img-ph{width:56px;height:56px;background:var(--dark3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:.92rem;color:var(--white);line-height:1.3;margin-bottom:.3rem}
+.ci-price{font-family:'Cinzel',serif;font-size:.72rem;color:var(--gold)}
+.ci-qty{display:flex;align-items:center;gap:.5rem;margin-top:.5rem}
+.ci-qty-btn{width:24px;height:24px;border:1px solid var(--border);background:var(--dark3);color:var(--gold);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.ci-qty-btn:hover{background:var(--gold);color:var(--dark);border-color:var(--gold)}
+.ci-qty-val{font-family:'Cinzel',serif;font-size:.75rem;color:var(--cream);min-width:20px;text-align:center}
+.ci-remove{background:none;border:none;color:var(--gold-dim);font-size:.8rem;cursor:pointer;margin-left:auto;align-self:flex-start;transition:color .2s}
+.ci-remove:hover{color:#e05a5a}
+.cart-footer{padding:1.2rem 1.5rem;border-top:1px solid var(--border)}
+.cart-subtotal{display:flex;justify-content:space-between;margin-bottom:.5rem;font-size:.9rem}
+.cart-subtotal .label{color:var(--cream-dim)}
+.cart-subtotal .val{font-family:'Cinzel',serif;color:var(--gold)}
+.cart-note{font-size:.72rem;color:var(--gold-dim);font-style:italic;margin-bottom:1rem;opacity:.7}
+.checkout-btn{width:100%;background:var(--gold);color:var(--dark);border:none;padding:1rem;font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.checkout-btn:hover{background:var(--gold-light)}
+.reserve-btn{width:100%;background:transparent;color:var(--cream-dim);border:1px solid var(--border);padding:.75rem;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-top:.5rem;transition:all .2s}
+.reserve-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ══ WHATSAPP BUBBLE ══ */
+.wa-bubble{position:fixed;bottom:2rem;right:2rem;z-index:700;display:flex;flex-direction:column;align-items:flex-end;gap:.7rem}
+.wa-chat-box{background:var(--dark3);border:1px solid var(--border);width:280px;border-radius:12px 12px 0 12px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);transform-origin:bottom right;transform:scale(0);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.wa-chat-box.open{transform:scale(1);opacity:1;pointer-events:all}
+.wa-chat-header{background:#075E54;padding:.9rem 1rem;display:flex;align-items:center;gap:.7rem}
+.wa-avatar{width:36px;height:36px;border-radius:50%;background:#128C7E;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.wa-name{color:#fff;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.05em}
+.wa-status{color:rgba(255,255,255,.6);font-size:.65rem;margin-top:.1rem}
+.wa-messages{padding:.8rem;background:#ECE5DD;min-height:100px}
+.wa-msg{background:#fff;border-radius:8px 8px 8px 0;padding:.5rem .8rem;font-size:.8rem;color:#333;max-width:90%;box-shadow:0 1px 2px rgba(0,0,0,.1);line-height:1.4;margin-bottom:.4rem}
+.wa-msg-time{font-size:.58rem;color:#999;text-align:right;margin-top:.2rem}
+.wa-input-row{display:flex;align-items:center;gap:.4rem;padding:.6rem}
+.wa-input{flex:1;background:#fff;border:none;border-radius:20px;padding:.5rem .9rem;font-size:.82rem;color:#333;outline:none;font-family:inherit}
+.wa-send{background:#075E54;border:none;color:#fff;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;flex-shrink:0;transition:background .2s}
+.wa-send:hover{background:#128C7E}
+.wa-fab{width:56px;height:56px;border-radius:50%;background:#25D366;border:none;color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 20px rgba(37,211,102,.4);display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative}
+.wa-fab:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(37,211,102,.5)}
+.wa-fab-pulse{position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(37,211,102,.5);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:0}}
+
+/* ══ FOOTER ══ */
+.site-footer{border-top:1px solid var(--border);background:var(--dark2);margin-top:4rem}
+.footer-main{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;max-width:1100px;margin:0 auto;padding:4rem 2rem}
+@media(max-width:860px){.footer-main{grid-template-columns:1fr 1fr;gap:2rem}}
+@media(max-width:540px){.footer-main{grid-template-columns:1fr}}
+.footer-brand .logo{font-size:1.8rem}
+.footer-brand p{font-size:.88rem;color:var(--cream-dim);margin-top:.8rem;line-height:1.7;max-width:280px;opacity:.8}
+.footer-col h4{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:.6rem;font-size:.88rem;color:var(--cream-dim);display:flex;align-items:flex-start;gap:.5rem;line-height:1.5}
+.footer-col ul li .icon{color:var(--gold-dim);flex-shrink:0;margin-top:.1rem}
+.footer-col a{color:var(--cream-dim);text-decoration:none;transition:color .2s}
+.footer-col a:hover{color:var(--gold)}
+.footer-meat{background:var(--dark3);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:2rem;text-align:center}
+.footer-meat-inner{max-width:800px;margin:0 auto}
+.footer-meat h3{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.meat-badges{display:flex;justify-content:center;flex-wrap:wrap;gap:1rem}
+.meat-badge{display:flex;align-items:center;gap:.5rem;padding:.5rem 1.2rem;border:1px solid var(--border);background:var(--dark2);font-size:.82rem;color:var(--cream-dim)}
+.meat-badge .icon{color:var(--gold);font-size:1rem}
+.footer-bottom{max-width:1100px;margin:0 auto;padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.8rem;border-top:1px solid rgba(201,168,76,.08)}
+.footer-copy{font-size:.75rem;color:var(--cream-dim);opacity:.5;letter-spacing:.05em}
+.footer-socials{display:flex;gap:.8rem}
+.social-link{width:32px;height:32px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--cream-dim);text-decoration:none;font-size:.9rem;transition:all .2s}
+.social-link:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ══ MAP PLACEHOLDER ══ */
+.map-wrap{background:var(--dark3);border:1px solid var(--border);height:160px;display:flex;align-items:center;justify-content:center;margin-top:.8rem;position:relative;overflow:hidden}
+.map-wrap::before{content:'📍 Darah Mall, Kuwait';font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;color:var(--gold-dim)}
+/* replace with real map iframe on deploy */
+
+/* ══ ANIMATIONS ══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .5s ease,transform .5s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:6rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark3);border:1px solid var(--gold);padding:.7rem 1.5rem;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;color:var(--gold);opacity:0;transition:all .3s;z-index:900;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:700px){
+  .header-top{padding:.7rem 1rem}
+  .search-wrap{max-width:none;flex:1}
+  .ham{display:flex}
+  .header-actions .hdr-btn:not(.cart-btn){display:none}
+  .item-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .hero-swiper{height:70vh;min-height:380px}
+  .swiper-prev,.swiper-next{width:36px;height:36px;font-size:.9rem}
+}
+
+/* ══ LANGUAGE TOGGLE BAR ══ */
+.lang-bar{background:var(--dark3);border-bottom:1px solid var(--border);padding:.4rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;font-size:.72rem}
+.lang-bar-left{color:var(--gold-dim);font-family:'Cinzel',serif;letter-spacing:.1em;font-size:.6rem}
+.lang-toggle-wrap{display:flex;align-items:center;gap:.7rem}
+.lang-label{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.08em;color:var(--cream-dim)}
+.lang-label.active-lang{color:var(--gold)}
+.lang-switch{position:relative;width:44px;height:22px;cursor:pointer}
+.lang-switch input{opacity:0;width:0;height:0}
+.lang-slider{position:absolute;inset:0;background:var(--dark4);border:1px solid var(--border);transition:.3s;border-radius:22px}
+.lang-slider:before{content:'';position:absolute;width:16px;height:16px;left:2px;bottom:2px;background:var(--gold);border-radius:50%;transition:.3s}
+.lang-switch input:checked + .lang-slider{background:rgba(201,168,76,.15);border-color:var(--gold)}
+.lang-switch input:checked + .lang-slider:before{transform:translateX(22px)}
+.lang-bar-right{display:flex;align-items:center;gap:.6rem}
+.bo-link{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;color:var(--gold-dim);text-decoration:none;border:1px solid var(--border);padding:.3rem .7rem;transition:all .2s;display:flex;align-items:center;gap:.3rem}
+.bo-link:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Arabic mode */
+body.ar-mode{direction:rtl}
+body.ar-mode .item-name{display:none}
+body.ar-mode .item-name-ar{display:block!important;font-size:1rem;color:var(--white);font-weight:600;margin-bottom:.1rem}
+body.ar-mode .item-desc{display:none}
+body.ar-mode .item-desc-ar{display:block!important}
+body.ar-mode .sec-title{display:none}
+body.ar-mode .sec-title-ar{font-size:1.2rem!important;color:var(--gold-light)!important;font-family:'Noto Naskh Arabic',serif!important}
+body.ar-mode .cat-nav-inner{direction:rtl}
+body.ar-mode .header-top{direction:rtl}
+body.ar-mode .search-wrap{direction:ltr}
+.item-desc-ar{display:none;font-size:.78rem;color:var(--cream-dim);line-height:1.6;font-style:normal;direction:rtl;margin-bottom:.8rem;flex:1;opacity:.8;font-family:'Noto Naskh Arabic',serif}
+
+/* ══ ITEM DETAIL MODAL ══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(8px)}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{position:fixed;top:50%;left:50%;transform:translate(-50%,-48%) scale(.96);z-index:1001;background:var(--dark2);border:1px solid var(--border);width:min(620px,95vw);max-height:90vh;overflow-y:auto;transition:all .3s cubic-bezier(.34,1.56,.64,1);opacity:0;pointer-events:none}
+.modal-box.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:all}
+.modal-img-wrap{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--dark3)}
+.modal-img-wrap img{width:100%;height:100%;object-fit:cover}
+.modal-img-ph{width:100%;aspect-ratio:16/9;background:var(--dark3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;font-size:4rem}
+.modal-img-upload{position:absolute;bottom:.8rem;right:.8rem;background:rgba(14,12,9,.85);border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.1em;padding:.4rem .8rem;cursor:pointer;backdrop-filter:blur(4px);display:flex;align-items:center;gap:.4rem;transition:all .2s}
+.modal-img-upload:hover{background:var(--gold);color:var(--dark)}
+.modal-img-upload input{display:none}
+.modal-badge-row{position:absolute;top:.8rem;left:.8rem;display:flex;gap:.4rem}
+.modal-body{padding:1.8rem}
+.modal-close{position:absolute;top:.8rem;right:.8rem;background:rgba(14,12,9,.8);border:1px solid var(--border);color:var(--cream-dim);width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;transition:all .2s;z-index:10;backdrop-filter:blur(4px)}
+.modal-close:hover{border-color:var(--gold);color:var(--gold)}
+.modal-category-tag{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.5rem}
+.modal-name{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;color:var(--white);line-height:1.15;margin-bottom:.25rem}
+.modal-name-ar{font-family:'Noto Naskh Arabic',serif;font-size:1.1rem;color:var(--gold-dim);direction:rtl;margin-bottom:.8rem}
+.modal-price-row{display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem}
+.modal-price{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--gold);letter-spacing:.05em}
+.modal-price-label{font-size:.72rem;color:var(--gold-dim);font-style:italic}
+.modal-divider{height:1px;background:var(--border);margin:1rem 0}
+.modal-desc-title{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:.5rem}
+.modal-desc{font-size:1rem;color:var(--cream-dim);line-height:1.7;font-style:italic}
+.modal-desc-ar{font-family:'Noto Naskh Arabic',serif;font-size:.95rem;color:var(--cream-dim);direction:rtl;line-height:1.8;margin-top:.5rem;display:none}
+body.ar-mode .modal-desc{display:none}
+body.ar-mode .modal-desc-ar{display:block}
+body.ar-mode .modal-name{display:none}
+body.ar-mode .modal-name-ar{font-size:1.8rem;color:var(--white);font-weight:600}
+.modal-actions{display:flex;gap:.8rem;margin-top:1.5rem;flex-wrap:wrap}
+.modal-add-btn{flex:1;background:var(--gold);color:var(--dark);border:none;padding:1rem;font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s;min-width:180px}
+.modal-add-btn:hover{background:var(--gold-light);transform:translateY(-1px)}
+.modal-edit-btn{background:transparent;color:var(--cream-dim);border:1px solid var(--border);padding:.9rem 1.2rem;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.4rem;text-decoration:none}
+.modal-edit-btn:hover{border-color:var(--gold);color:var(--gold)}
+.modal-img-note{font-size:.7rem;color:var(--gold-dim);font-style:italic;margin-top:.4rem;opacity:.8;text-align:center}
+
+/* ══ IMAGE GUIDE BANNER ══ */
+.img-guide{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.03));border:1px solid rgba(201,168,76,.2);max-width:960px;margin:2rem auto;padding:1.5rem 2rem;display:flex;align-items:flex-start;gap:1.2rem}
+.img-guide-icon{font-size:2rem;flex-shrink:0;margin-top:.1rem}
+.img-guide-content h3{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+.img-guide-content p{font-size:.82rem;color:var(--cream-dim);line-height:1.65}
+.img-guide-content code{background:var(--dark3);border:1px solid var(--border);color:var(--gold-light);padding:.1rem .4rem;font-size:.78rem;font-family:monospace;border-radius:2px}
+.img-guide-steps{list-style:none;margin-top:.6rem}
+.img-guide-steps li{font-size:.8rem;color:var(--cream-dim);padding:.25rem 0;display:flex;align-items:flex-start;gap:.5rem}
+.img-guide-steps li::before{content:attr(data-n);font-family:'Cinzel',serif;font-size:.6rem;color:var(--gold);background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.2);width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.05rem}
+.img-guide-close{background:none;border:none;color:var(--gold-dim);font-size:1.1rem;cursor:pointer;margin-left:auto;flex-shrink:0;transition:color .2s;align-self:flex-start}
+.img-guide-close:hover{color:var(--gold)}
+
+/* item card click cursor */
+.item-card .item-img-wrap,.item-card .item-body{cursor:pointer}
+
+@media(max-width:600px){
+  .lang-bar{padding:.4rem 1rem}
+  .lang-bar-left{display:none}
+  .modal-body{padding:1.2rem}
+  .modal-name{font-size:1.4rem}
+  .modal-actions{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ LANGUAGE BAR ══════════ -->
+<div class="lang-bar">
+  <span class="lang-bar-left">✦ 34 Lounge · Darah Mall · Kuwait ✦</span>
+  <div class="lang-toggle-wrap">
+    <span class="lang-label active-lang" id="lblEn">EN</span>
+    <label class="lang-switch" title="Toggle Arabic / English">
+      <input type="checkbox" id="langToggle" onchange="toggleLanguage()"/>
+      <span class="lang-slider"></span>
+    </label>
+    <span class="lang-label" id="lblAr" style="font-family:'Noto Naskh Arabic',serif">عربي</span>
+  </div>
+  <div class="lang-bar-right">
+    <a href="admin.html" class="bo-link">⚙️ Back Office — Edit Menu</a>
+  </div>
+</div>
+
+<!-- ══════════ HEADER ══════════ -->
+<header class="site-header">
+  <div class="header-top">
+    <a class="logo" href="#">34 Lounge <small>Restaurant & Café · Kuwait</small></a>
+
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="Search menu items…" autocomplete="off"/>
+      <span class="search-icon">🔍</span>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <div class="header-actions">
+      <a href="34lounge_reservation.html" class="hdr-btn">🗓 Reserve</a>
+      <a href="admin.html" class="hdr-btn" title="Back Office">⚙️</a>
+      <button class="hdr-btn cart-btn primary" onclick="toggleCart()">
+        🛒 Cart
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="ham" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Category Nav -->
+  <nav class="cat-nav">
+    <div class="cat-nav-inner" id="catNav">
+      <div class="cat-item active" data-target="breakfast">🍳 Breakfast</div>
+      <div class="cat-item" data-target="salad">🥗 Salads</div>
+      <div class="cat-item" data-target="soup">🍲 Soups</div>
+      <div class="cat-item" data-target="mezza">🫙 Mezza</div>
+      <div class="cat-item" data-target="appetizers">🍟 Appetizers</div>
+      <div class="cat-item" data-target="burgers">🍔 Burgers</div>
+      <div class="cat-item" data-target="mains">🍽 Mains</div>
+      <div class="cat-item" data-target="grills">🔥 Grills</div>
+      <div class="cat-item" data-target="pizza">🍕 Pizza & Fathayir</div>
+      <div class="cat-item" data-target="juices">🥤 Juices</div>
+      <div class="cat-item" data-target="mocktails">🍹 Mocktails</div>
+      <div class="cat-item" data-target="mojito">🌿 Mojito</div>
+      <div class="cat-item" data-target="cold-bev">🧊 Cold Drinks</div>
+      <div class="cat-item" data-target="hot-drinks">☕ Hot Drinks</div>
+      <div class="cat-item" data-target="sweets">🍫 Sweets</div>
+      <div class="cat-item" data-target="hot-coffee">☕ Hot Coffee</div>
+      <div class="cat-item" data-target="cold-coffee">🧋 Cold Coffee</div>
+      <div class="cat-item" data-target="celebration">🎉 Celebration</div>
+    </div>
+  </nav>
+</header>
+
+<!-- ══════════ HERO SWIPER ══════════ -->
+<section class="hero-swiper" id="heroSwiper">
+  <div class="swiper-track" id="swiperTrack">
+
+    <!-- Slide 1 -->
+    <div class="slide active">
+      <div class="slide-bg" style="background-image:url('images/hero1.jpg');background-color:#2a1a08"></div>
+      <div class="slide-content">
+        <div class="slide-badge">✦ Darah Mall · Kuwait ✦</div>
+        <h1 class="slide-title">A Taste of Luxury,<br>Every Visit</h1>
+        <p class="slide-sub">Where Lebanese heritage meets contemporary dining</p>
+        <div class="slide-cta">
+          <a class="slide-btn primary" href="#breakfast">Explore Menu</a>
+          <a class="slide-btn outline" href="34lounge_reservation.html">Reserve a Table</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide">
+      <div class="slide-bg" style="background-image:url('images/hero2.jpg');background-color:#1a0e0e"></div>
+      <div class="slide-content">
+        <div class="slide-badge">✦ Signature Grills ✦</div>
+        <h1 class="slide-title">Charcoal-Grilled<br>to Perfection</h1>
+        <p class="slide-sub">Fresh cuts, aromatic spices, flames that tell a story</p>
+        <div class="slide-cta">
+          <a class="slide-btn primary" href="#grills">View Grills</a>
+          <a class="slide-btn outline" href="34lounge_reservation.html">Book Now</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide">
+      <div class="slide-bg" style="background-image:url('images/hero3.jpg');background-color:#0e1a14"></div>
+      <div class="slide-content">
+        <div class="slide-badge">✦ Celebration Tables ✦</div>
+        <h1 class="slide-title">Make Every Moment<br>Unforgettable</h1>
+        <p class="slide-sub">Birthday packages, private rooms & premium décor from KWD 20</p>
+        <div class="slide-cta">
+          <a class="slide-btn primary" href="#celebration">See Packages</a>
+          <a class="slide-btn outline" href="34lounge_reservation.html">Reserve Now</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide">
+      <div class="slide-bg" style="background-image:url('images/hero4.jpg');background-color:#0e0c1a"></div>
+      <div class="slide-content">
+        <div class="slide-badge">✦ Dessert Heaven ✦</div>
+        <h1 class="slide-title">Sweets That<br>Steal the Show</h1>
+        <p class="slide-sub">From molten lava cakes to San Sebastian cheesecake</p>
+        <div class="slide-cta">
+          <a class="slide-btn primary" href="#sweets">View Sweets</a>
+          <a class="slide-btn outline" href="#cold-coffee">Cold Coffee</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <button class="swiper-prev" onclick="swiperMove(-1)">‹</button>
+  <button class="swiper-next" onclick="swiperMove(1)">›</button>
+  <div class="swiper-dots" id="swiperDots"></div>
+</section>
+
+
+<!-- ══════════ IMAGE INJECT GUIDE ══════════ -->
+<!--
+<div class="img-guide" id="imgGuide">
+  <div class="img-guide-icon">📸</div>
+  <div class="img-guide-content">
+    <h3>Easiest Way to Add Images to Every Item</h3>
+    <p>You have <strong>3 methods</strong> — pick the one that fits your workflow:</p>
+    <ul class="img-guide-steps">
+      <li data-n="1"><span><strong>Click any item card</strong> → open its detail popup → click <em>"📷 Upload Image"</em>. Image is saved instantly to localStorage and shown on the card. No server needed.</span></li>
+      <li data-n="2"><span>Open <a href="admin.html" style="color:var(--gold)">Back Office → Image Manager tab</a>, upload per item ID (e.g. <code>b1</code>, <code>s3</code>, <code>g1</code>). Changes appear on this page immediately.</span></li>
+      <li data-n="3"><span>Put image files in an <code>images/</code> folder next to this HTML file, named by item ID: <code>images/b1.jpg</code>, <code>images/g1.jpg</code> etc. Then set <code>img:'images/b1.jpg'</code> in the MENU data object inside the <code>&lt;script&gt;</code> tag.</span></li>
+    </ul>
+  </div>
+  <button class="img-guide-close" onclick="document.getElementById('imgGuide').style.display='none'" title="Dismiss">✕</button>
+</div>
+-->
+
+<!-- ══════════ ITEM DETAIL MODAL ══════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+<div class="modal-box" id="modalBox">
+  <button class="modal-close" onclick="closeModal()">✕</button>
+  <div id="modalInner"></div>
+</div>
+
+<!-- ══════════ MENU SECTIONS ══════════ -->
+<!-- Each section follows: id + data-category, items use data-item-id for image injection -->
+
+<!-- BREAKFAST -->
+<section class="section reveal" id="breakfast" data-category="breakfast">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Breakfast</div><div class="sec-title-ar">فطور</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-breakfast"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- SALADS -->
+<section class="section reveal" id="salad" data-category="salad">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Salads</div><div class="sec-title-ar">سلطة</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-salad"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- SOUPS -->
+<section class="section reveal" id="soup" data-category="soup">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Soups</div><div class="sec-title-ar">شوربة</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-soup"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- MEZZA -->
+<section class="section reveal" id="mezza" data-category="mezza">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Mezza — Cold & Hot</div><div class="sec-title-ar">مقبلات باردة وساخنة</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-mezza"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- APPETIZERS -->
+<section class="section reveal" id="appetizers" data-category="appetizers">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Appetizers</div><div class="sec-title-ar">المقبلات</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-appetizers"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- BURGERS -->
+<section class="section reveal" id="burgers" data-category="burgers">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Sandwich & Burger Station</div><div class="sec-title-ar">برجر ستيشن</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-burgers"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- MAINS -->
+<section class="section reveal" id="mains" data-category="mains">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Main Course</div><div class="sec-title-ar">الطبق الرئيسي</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-mains"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- GRILLS -->
+<section class="section reveal" id="grills" data-category="grills">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Grills</div><div class="sec-title-ar">مشويات</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-grills"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- PIZZA -->
+<section class="section reveal" id="pizza" data-category="pizza">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Pizza & Fathayir</div><div class="sec-title-ar">بيتزا و فطائر</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-pizza"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- JUICES -->
+<section class="section reveal" id="juices" data-category="juices">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Fresh Juices</div><div class="sec-title-ar">عصائر طازجة</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-juices"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- MOCKTAILS -->
+<section class="section reveal" id="mocktails" data-category="mocktails">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Mocktails & Milkshakes</div><div class="sec-title-ar">موكتيل وميلك شيك</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-mocktails"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- MOJITO -->
+<section class="section reveal" id="mojito" data-category="mojito">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Mojito</div><div class="sec-title-ar">موهيتو</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-mojito"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- COLD BEVERAGES -->
+<section class="section reveal" id="cold-bev" data-category="cold-bev">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Cold Beverages</div><div class="sec-title-ar">المشروبات الباردة</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-cold-bev"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- HOT DRINKS -->
+<section class="section reveal" id="hot-drinks" data-category="hot-drinks">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Hot Drinks</div><div class="sec-title-ar">مشروبات ساخنة</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-hot-drinks"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- SWEETS -->
+<section class="section reveal" id="sweets" data-category="sweets">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Sweets</div><div class="sec-title-ar">حلو</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-sweets"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- HOT COFFEE -->
+<section class="section reveal" id="hot-coffee" data-category="hot-coffee">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Classic Hot Coffee</div><div class="sec-title-ar">قهوة كلاسيكية ساخنة</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-hot-coffee"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- COLD COFFEE -->
+<section class="section reveal" id="cold-coffee" data-category="cold-coffee">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Classic Cold Coffee</div><div class="sec-title-ar">قهوة باردة كلاسيكية</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-cold-coffee"></div>
+</section>
+<div class="sec-divider"><div class="sec-div-line"></div><div class="sec-div-diamond"></div><div class="sec-div-line"></div></div>
+
+<!-- CELEBRATION -->
+<section class="section reveal" id="celebration" data-category="celebration">
+  <div class="section-header">
+    <div class="sec-line"></div>
+    <div><div class="sec-title">Celebration Table</div><div class="sec-title-ar">طاولة الاحتفال</div></div>
+    <div class="sec-line r"></div>
+  </div>
+  <div class="item-grid" id="grid-celebration"></div>
+</section>
+
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="site-footer">
+
+  <!-- Meat Source Banner -->
+  <div class="footer-meat">
+    <div class="footer-meat-inner">
+      <h3>Our Commitment to Quality</h3>
+      <div class="meat-badges">
+        <div class="meat-badge"><span class="icon">🥩</span> 100% Halal Certified Meat</div>
+        <div class="meat-badge"><span class="icon">🌿</span> Fresh Ingredients Daily</div>
+        <div class="meat-badge"><span class="icon">🐄</span> Premium Brazilian & Australian Beef</div>
+        <div class="meat-badge"><span class="icon">🐔</span> Fresh Local Poultry</div>
+        <div class="meat-badge"><span class="icon">🐟</span> Sustainably Sourced Seafood</div>
+        <div class="meat-badge"><span class="icon">🫒</span> Extra Virgin Lebanese Olive Oil</div>
+        <div class="meat-badge"><span class="icon">🧀</span> Imported European Dairy</div>
+        <div class="meat-badge"><span class="icon">🌾</span> No Artificial Preservatives</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Main -->
+  <div class="footer-main">
+    <div class="footer-brand">
+      <a class="logo" href="#">34 Lounge</a>
+      <p>An elevated dining experience rooted in Lebanese warmth, at the heart of Darah Mall. From morning breakfast to late-night sweets, every dish is crafted with love and premium ingredients.</p>
+      <div style="margin-top:1.2rem;display:flex;gap:.6rem">
+        <a class="social-link" href="#" title="Instagram">📸</a>
+        <a class="social-link" href="#" title="TikTok">🎵</a>
+        <a class="social-link" href="https://wa.me/96566661404" title="WhatsApp">💬</a>
+        <a class="social-link" href="#" title="Snapchat">👻</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><span class="icon">📞</span><a href="tel:+96566661404">+965 6666 1404</a></li>
+        <li><span class="icon">💬</span><a href="https://wa.me/96566661404">WhatsApp Us</a></li>
+        <li><span class="icon">✉️</span><a href="mailto:info@34lounge.kw">info@34lounge.kw</a></li>
+        <li><span class="icon">📸</span><a href="#">@34Lounge.kw</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Opening Hours</h4>
+      <ul>
+        <li><span class="icon">🌅</span>Breakfast: 7:00 AM – 12:00 PM</li>
+        <li><span class="icon">☀️</span>Lunch: 12:00 PM – 4:00 PM</li>
+        <li><span class="icon">🌙</span>Dinner: 4:00 PM – 12:00 AM</li>
+        <li><span class="icon">🎉</span>Fri–Sat: Until 1:00 AM</li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Location</h4>
+      <ul>
+        <li><span class="icon">📍</span>Darah Mall, Kuwait City</li>
+        <li><span class="icon">🏢</span>Ground Floor, Main Wing</li>
+        <li><span class="icon">🚗</span>Ample parking available</li>
+      </ul>
+      <div class="map-wrap" style="margin-top:.8rem">
+        <!-- Replace with real Google Maps embed -->
+        <!-- <iframe src="https://maps.google.com/maps?q=Darah+Mall+Kuwait&output=embed" width="100%" height="160" frameborder="0"></iframe> -->
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 34 Lounge Restaurant & Café. All rights reserved. · Darah Mall, Kuwait</div>
+    <div style="font-size:.72rem;color:var(--gold-dim)">
+      <a href="34lounge_reservation.html" style="color:var(--gold-dim);text-decoration:none;margin-right:1rem">Reserve a Table</a>
+      <a href="admin.html" style="color:var(--gold-dim);text-decoration:none">Back Office</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════ CART DRAWER ══════════ -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <div class="cart-title">Your Order 🛒</div>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">Your cart is empty.<br><small style="opacity:.6">Add items from the menu.</small></div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-subtotal"><span class="label">Subtotal</span><span class="val" id="cartSubtotal">KWD 0.000</span></div>
+    <div class="cart-subtotal"><span class="label">Service</span><span class="val">KWD 0.000</span></div>
+    <div class="cart-note">Prices exclude VAT. Subject to 5% service charge.</div>
+    <button class="checkout-btn" onclick="checkout()">Place Order via WhatsApp →</button>
+    <button class="reserve-btn" onclick="window.location='34lounge_reservation.html'">🗓 Reserve a Table Instead</button>
+  </div>
+</div>
+
+<!-- ══════════ WHATSAPP BUBBLE ══════════ -->
+<div class="wa-bubble">
+  <div class="wa-chat-box" id="waChatBox">
+    <div class="wa-chat-header">
+      <div class="wa-avatar">🍽</div>
+      <div>
+        <div class="wa-name">34 Lounge</div>
+        <div class="wa-status">Typically replies in minutes</div>
+      </div>
+    </div>
+    <div class="wa-messages" id="waMessages">
+      <div class="wa-msg">
+        👋 Welcome to 34 Lounge! How can we help you today?
+        <div class="wa-msg-time">Now</div>
+      </div>
+      <div class="wa-msg">
+        You can ask about reservations, menu items, or send your order directly.
+        <div class="wa-msg-time">Now</div>
+      </div>
+    </div>
+    <div class="wa-input-row">
+      <input class="wa-input" id="waInput" placeholder="Type a message…" onkeydown="waKeydown(event)"/>
+      <button class="wa-send" onclick="waSend()">➤</button>
+    </div>
+  </div>
+  <button class="wa-fab" onclick="toggleWA()" title="Chat on WhatsApp">
+    <div class="wa-fab-pulse"></div>
+    💬
+  </button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════
+   MENU DATA
+   To add images: set  img: 'images/filename.jpg'
+   on any item. Leave blank for placeholder.
+════════════════════════════════════════ */
+const MENU = {
+  breakfast:[
+    {id:'b1',name:'34 Morning Breakfast',ar:'34 فطور الصباح',price:13.500,badge:'New',emoji:'🍳',
+     desc:'Hammous, Lebneh, Foul, Musabbaha, Gemar, Eggplant, Fried Cauliflower, White Cheese, Filafil/Spring Roll/Sambusek, 2 Eggs, Vegetable Relish, Olives, Honey, Butter, Jam, Karak Tea & Water — with Lebanese Bread, Fathayer Cheese & Zaatar.',img:'images/b1.jpg'},
+    {id:'b2',name:'Lounge Lebanese Breakfast',ar:'صالة الإفطار اللبناني',price:10.500,emoji:'🫕',
+     desc:'Hammous, Fatteh Eggplant, Mutabbal, Fattush, Lebneh, Filafil, Foul, White Cheese, Egg of choice, Olives & Pickles — with freshly baked Lebanese Bread, Bread Rolls, Tea & Water.',img:'images/b2.jpg'},
+    {id:'b3',name:'New Sunrise Breakfast',ar:'فطور الشروق',price:6.500,badge:'New',emoji:'🌅',
+     desc:'Hamous, Lebneh, Foul, Filafil, White Fetta Cheese, Green Salad, Olives, Pickles & Tea — with freshly baked Lebanese Bread.',img:'images/b3.jpg'},
+    {id:'b4',name:'Mushroom Omlette',ar:'عجة الفطر',price:3.500,emoji:'🍄',
+     desc:'Egg omlette with mushrooms — served with beef sausage, hash brown potato, jam, butter, honey, homemade bread & toasted bread.',img:'images/b4.jpeg'},
+    {id:'b5',name:'American Cheese Omlette',ar:'عجة الجبن الأمريكية',price:3.500,emoji:'🧀',
+     desc:'Egg omlette stuffed with cheese — served with beef sausage, hash brown potato, jam, butter, honey, homemade & toasted bread.',img:'images/b5.jpeg'},
+    {id:'b6',name:'Hammous',ar:'حمص',price:2.000,emoji:'🫙',desc:'',img:'images/b6.jpeg'},
+    {id:'b7',name:'Foul Mudammas',ar:'فول مدمس',price:2.000,emoji:'🫘',desc:'',img:'images/b7.jpeg'},
+    {id:'b8',name:'Lebneh',ar:'لبنة',price:2.000,emoji:'🥛',desc:'',img:'images/b8.jpeg'},
+    {id:'b9',name:'Filafil',ar:'فلافيل',price:1.750,emoji:'🟢',desc:'',img:'images/b9.jpeg'},
+  ],
+  salad:[
+    {id:'s1',name:'Kale Salad',ar:'سلطة كيل',price:4.750,emoji:'🥗',desc:'Fresh kale, mixed lettuce, shredded cherry tomato, pomegranate seeds, muesli — with creamy balsamic sauce & Burrata.',img:'images/s1.jpeg'},
+    {id:'s2',name:'Mexican Salad',ar:'سلطة مكسيكية',price:4.500,emoji:'🌮',desc:'Mixed bell pepper, tomato, cucumber, red onion, red beans — with Mexican mild sauce & crispy tortilla chips.',img:'images/s2.jpeg'},
+    {id:'s3',name:'Parma Quinoa Salad',ar:'بارما كينوا سلاد',price:4.500,emoji:'🌾',desc:'Multi quinoa, Lulu Russo, cucumber, mixed bell pepper, tomato, sweet corn — pink sauce, avocado, parmesan & almond slices.',img:'images/s3.jpeg'},
+    {id:'s4',name:'Kalamatta Greek Salad',ar:'قلاماتا سلطة يوناني',price:4.250,emoji:'🫒',desc:'Roman lettuce, tomato, capsicum trio, cucumber, red onion, Kalamata olives & Feta cheese — vinaigrette dressing.',img:'images/s4.jpeg'},
+    {id:'s5',name:'Parma Caesar Salad',ar:'بيرما سيزر',price:3.250,emoji:'🥬',desc:'Shredded Roman lettuce, bread crouton, parmesan — special Caesar dressing. Add Chicken +1.000 · Shrimps +1.500',img:'images/s5.jpeg'},
+    {id:'s6',name:'34 Lounge Mixed Salad',ar:'سلطة 34 لاونج',price:4.500,emoji:'🥑',desc:'Edamame, avocado, sweet corn, tomato, cucumber, Lulu Russo — 34 Lounge special sauce.',img:'images/s6.jpeg'},
+    {id:'s7',name:'Tropical Mango Salad',ar:'سلطة جرجير بالدجاج والمانجو',price:4.250,emoji:'🥭',desc:'Jarjir, grilled chicken breast, fresh mango, pomegranate seeds, sesame seeds & magic vegetables.',img:'images/s7.jpeg'},
+    {id:'s8',name:'Winter Salad',ar:'سلطة كرسبي',price:4.000,emoji:'🥦',desc:'Red & white cabbage, baby mixed green, carrot, cucumber — 34 Lounge special sauce, tortilla, parmesan & cilantro.',img:'images/s8.jpeg'},
+    {id:'s9',name:'Farmer Beetroot Salad',ar:'سلطة الشمندر',price:3.750,emoji:'🫐',desc:'Diced beetroot with pomegranate sauce, baby mixed green, goat cheese & crispy beetroot.',img:'images/s9.jpeg'},
+    {id:'s10',name:'Avocado Shrimp Salad',ar:'سلطة الروبيان بالأفوكادو',price:5.250,emoji:'🦐',desc:'Boiled shrimps, celery, Roman lettuce, avocado, cucumber — mustard honey sauce & cocktail sauce.',img:'images/s10.jpeg'},
+  ],
+  soup:[
+    {id:'so1',name:'Butternut Squash Soup',ar:'شوربة القرع',price:2.750,emoji:'🎃',desc:'Butternut squash, white onion, garlic & olive oil — topped with cream & crispy parsnip.',img:'images/so1.jpeg'},
+    {id:'so2',name:'Cream of Mushroom Soup',ar:'شوربة الماشروم',price:3.250,emoji:'🍄',desc:'Fresh mushroom soup with parmesan cheese & parsley.',img:'images/so2.jpeg'},
+    {id:'so3',name:'Cream of Chicken Soup',ar:'شوربة كريمة الدجاج',price:2.750,emoji:'🍗',desc:'',img:'images/so3.jpeg'},
+    {id:'so4',name:'Lentil Soup',ar:'شوربة العدس',price:2.250,emoji:'🫘',desc:'',img:'images/so4.jpeg'},
+  ],
+  mezza:[
+    {id:'m1',name:'Batata Harra',ar:'بطاطا حرّة',price:2.750,emoji:'🥔',desc:'Potato cubes with coriander & garlic.',img:'images/m1.jpg'},
+    {id:'m2',name:'Hummus',ar:'حمص',price:2.000,emoji:'🫙',desc:'Hummus, tahini, lemon & olive oil.',img:'images/m2.jpg'},
+    {id:'m3',name:'Hummus with Meat',ar:'حمص باللحمة',price:3.500,emoji:'🥩',desc:'Hummus topped with sautéed diced meat.',img:'images/m3.jpg'},
+    {id:'m4',name:'Fattoush',ar:'فتوش',price:2.500,emoji:'🥗',desc:'Tomatoes, cucumbers, lettuce, parsley, green bell peppers, toasted Arabic bread — olive oil & lemon dressing.',img:''},
+    {id:'m5',name:'Tabouleh',ar:'تبولة',price:2.250,emoji:'🌿',desc:'',img:'images/m5.jpg'},
+    {id:'m6',name:'Moutabbal',ar:'متبل باذنجان',price:2.000,emoji:'🍆',desc:'Eggplant, tahini & lemon dressing.',img:'images/m6.jpg'},
+    {id:'m7',name:'Combo Mezza Tray',ar:'صنية مقبلات كومبو',price:9.500,emoji:'🫕',desc:'Chicken liver, Hummus meat, Fattush, Batata Harra, cheese spring rolls, sambusek, filafil & kibbeh burgul — with Lebanese Bread.',img:'images/m7.jpg'},
+    {id:'m8',name:'Kibbeh — Meat',ar:'حشوة اللحم',price:2.000,emoji:'🥙',desc:'',img:'images/m8.jpeg'},
+  ],
+  appetizers:[
+    {id:'a1',name:'Potatoes Kiven',ar:'بطاط كيفن',price:5.000,emoji:'🥔',desc:'Deep-fried crispy shredded potatoes, shredded short ribs & tortilla — cloud sauce, chilantrо & chipotle.',img:'images/a1.jpeg'},
+    {id:'a2',name:'Chicken Gunn Gunn Potatoes',ar:'',price:4.250,emoji:'🍗',desc:'Julienne golden-fried potatoes, shredded oven-roast chicken, fried tortilla — with homemade medium spicy sauce & chipotle cilantro sauce.',img:'images/a2.jpeg'},
+    {id:'a3',name:'Asian Chicken',ar:'دجاج آسيوي',price:4.000,emoji:'🥡',desc:'Marinated fried chicken leg cubes in tempura batter — tossed with Asian mild sauce, chipotle sauce, in a papadam basket.',img:'images/a3.jpeg'},
+    {id:'a4',name:'Grilled Edamame',ar:'أديمامي مشوي',price:3.000,emoji:'🌿',desc:'Charcoal-grilled edamame with sauce, crispy fried leek, orange & salt flakes.',img:'images/a4.jpeg'},
+    {id:'a5',name:'Shrimp Volvo',ar:'ربيان فولفو',price:4.500,emoji:'🦐',desc:'Golden butter-fried shrimps with Volvo sauce, cilantro, chipotle & avocado.',img:'images/a5.jpeg'},
+    {id:'a6',name:'Chicken Pop',ar:'دجاج بوب',price:3.750,emoji:'🍗',desc:'Tender crispy chicken chunks — chipotle sauce, crème garlic, fried leek & cilantro.',img:'images/a6.jpeg'},
+    {id:'a7',name:'Stuffed Mushrooms',ar:'فطر محشي مقلي',price:3.750,emoji:'🍄',desc:'Fresh mushrooms stuffed with 3 kinds of cheese, breaded with panko & deep-fried.',img:'images/a7.jpeg'},
+    {id:'a8',name:'Mozzarella Sticks',ar:'أصابع الجبن',price:2.750,emoji:'🧀',desc:'Breaded golden-fried mozzarella sticks — served with fresh rocket & special sauce.',img:'images/a8.jpeg'},
+    {id:'a9',name:'Golden Cheese Fries',ar:'بطاطس الجبن الذهبية',price:3.250,emoji:'🍟',desc:'Deep-fried round-sliced homemade potatoes topped with cheddar cheese & creamy sauce.',img:'images/a9.jpeg'},
+    {id:'a10',name:'Cheesy Fries',ar:'بطاط مع الجبن',price:2.750,emoji:'🍟',desc:'French fries with yellow cheddar, jalapeño & roasted panko crumbs.',img:'images/a10.jpeg'},
+    {id:'a11',name:'Mild Spicy Cheesy Fries',ar:'بطاطا مقلية بالجبن الحارة',price:2.750,emoji:'🌶️',desc:'',img:'images/a11.jpeg'},
+    {id:'a12',name:'French Fries',ar:'بطاط كلاسيك',price:1.750,emoji:'🍟',desc:'Classic fries with cajun spice & oregano.',img:'images/a12.jpeg'},
+    {id:'a13',name:'Shrimp Tacos',ar:'سندويشات الروبيان',price:4.750,emoji:'🌮',desc:'Crispy golden fried shrimps, shredded cheese, lettuce, cabbage & cucumber rolled in tortilla with mild pink sauce.',img:'images/a13.jpeg'},
+    {id:'a14',name:'Crispy Chicken Tacos',ar:'تاكو الدجاج المقرمش',price:4.250,emoji:'🌮',desc:'Golden fried chicken slices, oven-dried tomato, shredded cheese, Roman lettuce, cabbage & cucumber — mild pink sauce in tortilla.',img:'images/a14.jpeg'},
+  ],
+  burgers:[
+    {id:'bu1',name:'Chicken Slider',ar:'سلايدر الدجاج',price:2.750,emoji:'🍔',desc:'Crispy golden fried chicken, gratin, cheddar cheese — with 34 Lounge special sauce.',img:'images/bu1.jpeg'},
+    {id:'bu2',name:'Classic Chicken Slider',ar:'دجاج سلايدر فوكادو',price:3.250,emoji:'🍔',desc:'Crispy golden fried chicken topped with avocado & yellow cheddar cheese.',img:'images/bu2.jpeg'},
+    {id:'bu3',name:'Chicken Cheese Burger',ar:'برجر دجاج',price:3.500,emoji:'🍔',desc:'',img:'images/bu3.jpeg'},
+    {id:'bu4',name:'Cheese Beef Burger',ar:'برجر مع الجبنة',price:3.750,emoji:'🍔',desc:'Beef patty, lettuce, tomatoes, mushroom sauce & cheddar cheese — served with fries.',img:'images/bu4.jpeg'},
+    {id:'bu5',name:'34 Lounge Burger',ar:'برجر 34 لاونج',price:4.750,emoji:'🍔',desc:'Beef patty, lettuce, avocado, turkey ham, cheese & caramelized onion — served with fries.',img:'images/bu5.jpeg'},
+    {id:'bu6',name:'Classic Beef Burger',ar:'برجر مع البيكن',price:4.250,emoji:'🍔',desc:'Beef patty, lettuce, onion, cheese, beef bacon & eggs — served with fries.',img:'images/bu6.jpeg'},
+  ],
+  mains:[
+    {id:'mn1',name:'Short Ribs 34',ar:'',price:9.500,emoji:'🥩',desc:'Marinated pot-roast short ribs — mashed potatoes, cheddar cheese, cola glaze sauce.',img:'images/mn1.jpeg'},
+    {id:'mn2',name:'Lamb Shank',ar:'موزة لحم',price:8.750,emoji:'🍖',desc:'Overnight marinated lamb shank — cola glaze, yogurt mint, mashed potato, boiled zucchini or carrot.',img:'images/mn2.jpeg'},
+    {id:'mn3',name:'Chicken Sizzler',ar:'دجاج سيزلر',price:5.500,emoji:'🍗',desc:'Boneless grilled half baby chicken in a sizzler pan with vegetables — choice of rice or fries.',img:'images/mn3.jpeg'},
+    {id:'mn4',name:'Fajita Shrimps',ar:'روبيان فاهيتا',price:7.500,emoji:'🦐',desc:'Shrimps marinated with homemade spices, sautéed & served on a sizzling plate — rice or fries, sour cream & avocado salsa.',img:'images/mn4.jpg'},
+    {id:'mn5',name:'German Chicken Schnitzel',ar:'',price:5.500,emoji:'🍗',desc:'Deep-fried golden chicken — mashed potatoes, citrose sauce, spring onions & micro bean.',img:'images/mn5.jpeg'},
+    {id:'mn6',name:'Fillet of Beef',ar:'لحم فيليه',price:8.750,emoji:'🥩',desc:'Grilled beef fillet — broccoli, carrot, mashed potatoes & peppercorn sauce.',img:'images/mn6.jpeg'},
+    {id:'mn7',name:'Sirloin Steak',ar:'ستيك سيرالوين',price:8.000,emoji:'🥩',desc:'Charcoal-grilled sirloin — asparagus, broccoli, carrots, Brussels sprouts, roasted potatoes, mushroom sauce.',img:'images/mn7.jpeg'},
+    {id:'mn8',name:'Chicken Breast with Mushroom Sauce',ar:'صدر دجاج مع الماشروم',price:6.500,emoji:'🍗',desc:'Charcoal-grilled chicken breast — broccoli, carrot, fennel, cherry tomato & mushroom sauce.',img:'images/mn8.jpeg'},
+    {id:'mn9',name:'Herbs Crust Salmon',ar:'سالمون هيربس',price:8.500,emoji:'🐟',desc:'Oven-baked salmon with a herb crust — julienne vegetables, asparagus, fennel & citrus sauce.',img:'images/mn9.jpeg'},
+    {id:'mn10',name:'Panko Golden Jumbo Shrimps',ar:'جمبري جامبو مقلي',price:8.750,emoji:'🦐',desc:'Breaded golden-fried jumbo shrimps with homemade pink sauce — fries & remoulade sauce.',img:'images/mn10.jpeg'},
+    {id:'mn11',name:'Butterfly Crispy Shrimps',ar:'روبيان مقلي مقرمش',price:7.000,emoji:'🦐',desc:'Breaded golden shrimps — crispy fries & remoulade sauce.',img:'images/mn11.jpeg'},
+    {id:'mn12',name:'Pink Penne',ar:'بينك باستا',price:4.000,emoji:'🍝',desc:'Penne with pink sauce, parmesan & basil. Add Chicken +1.000 · Shrimps +1.500',img:'images/mn12.jpeg'},
+    {id:'mn13',name:'Penne Alfredo',ar:'الفريدو باستا',price:4.000,emoji:'🍝',desc:'Penne with Alfredo sauce, basil oil, parmesan & oregano. Add Chicken +1.000 · Shrimps +1.500',img:'images/mn13.jpeg'},
+    {id:'mn14',name:'Penne Pesto',ar:'بيستو باستا',price:4.250,emoji:'🍝',desc:'Penne with pesto sauce, parmesan, basil oil & fresh basil.',img:'images/mn14.jpeg'},
+    {id:'mn15',name:'Traditional Lasagne',ar:'لازانيا تقليدية',price:4.750,emoji:'🫕',desc:'Pasta sheets with meat & tomato sauce, topped with mozzarella — oven baked.',img:'images/mn15.jpeg'},
+    {id:'mn16',name:'Pink Risotto',ar:'بينك رزيتو',price:4.250,emoji:'🍚',desc:'Italian arborio rice with pink sauce, basil oil & parmesan.',img:'images/mn16.jpeg'},
+    {id:'mn17',name:'Biryani Shrimps',ar:'برياني روبيان',price:5.750,emoji:'🍚',desc:'Basmati rice with traditional Indian spices & shrimps in curry sauce — cucumber yoghurt.',img:'images/mn17.jpeg'},
+    {id:'mn18',name:'Cheese Mac',ar:'معكرونة بالجبن',price:4.500,emoji:'🧀',desc:'Macaroni in béchamel sauce, cheddar & mozzarella — oven baked with panko crumbs.',img:'images/mn18.jpeg'},
+    {id:'mn19',name:'Indian Chicken Biryani',ar:'برياني دجاج هندي',price:4.750,emoji:'🍚',desc:'Basmati rice with traditional Indian spices & boneless chicken — curry sauce & cucumber yoghurt.',img:'images/mn19.jpeg'},
+    {id:'mn20',name:'Butter Chicken',ar:'دجاج بتر',price:4.750,emoji:'🍛',desc:'Traditional butter chicken — biryani rice, fried onions & cream.',img:'images/mn20.jpeg'},
+    {id:'mn21',name:'Fajita Beef',ar:'فاهيتا لحم البقر',price:7.750,emoji:'🥩',desc:'Marinated sliced beef sautéed with white onion & mixed capsicum — sizzling pan, rice or fries.',img:'images/mn21.jpg'},
+    {id:'mn22',name:'Chicken Fajita',ar:'فاهيتا الدجاج',price:6.000,emoji:'🍗',desc:'Marinated sliced chicken with onion & capsicum on a sizzler plate — rice or fries, sour cream & avocado salsa.',img:'images/mn22.jpg'},
+  ],
+  grills:[
+    {id:'g1',name:'Mixed Grill',ar:'مشاوي مشكلة',price:7.500,emoji:'🔥',desc:'Kofta, Shish Tawook, Tikka & half arayis meat — fries, garlic sauce & Lebanese bread.',img:'images/g1.jpg'},
+    {id:'g2',name:'Kofta (Kebab Meat)',ar:'كفتة',price:5.750,emoji:'🥙',desc:'2 skewers of charcoal-grilled fresh minced lamb with herbs & spices — fries, tahini sauce & Lebanese bread.',img:'images/g2.jpeg'},
+    {id:'g3',name:'Tikka (Shish Kebab)',ar:'تيكا لحم مشوي',price:6.750,emoji:'🥩',desc:'2 skewers of grilled meat cubes — fries & garlic sauce.',img:'images/g3.jpg'},
+    {id:'g4',name:'Lamb Chops',ar:'شرائح لحم الضأن',price:6.500,emoji:'🍖',desc:'Bone-in riblets marinated in spices & herbs, grilled to perfection — fries & garlic sauce.',img:'images/g4.jpeg'},
+    {id:'g5',name:'Arayis Meat',ar:'عرايس لحمة',price:4.750,emoji:'🥙',desc:'2 meat arayes — fries & garlic sauce.',img:'images/g5.jpeg'},
+    {id:'g6',name:'Shish Tawook',ar:'شيش طاووق',price:5.250,emoji:'🍗',desc:'2 skewers of tender marinated grilled chicken — fries & garlic sauce.',img:'images/g6.jpg'},
+    {id:'g7',name:'Grilled Chicken',ar:'دجاج مشوي',price:4.250,emoji:'🐔',desc:'Half grilled chicken with special marinade — fries & garlic sauce.',img:'images/g7.jpg'},
+  ],
+  pizza:[
+    {id:'p1',name:'Veggie Pizza',ar:'بيتزا خضار',price:4.250,emoji:'🍕',desc:'Homemade dough with fresh vegetables, pesto sauce & mozzarella.',img:'images/p1.jpeg'},
+    {id:'p2',name:'Pizza Pepperoni',ar:'بيتزا بيبروني',price:5.500,emoji:'🍕',desc:'Homemade dough with pepperoni & mozzarella.',img:'images/p2.jpeg'},
+    {id:'p3',name:'Special Zaatar Pizza',ar:'بيتزا زعتر المميزة',price:4.500,emoji:'🍕',desc:'Homemade dough with zaatar, tomatoes & mozzarella — topped with rocket leaves.',img:'images/p3.jpeg'},
+    {id:'p4',name:'Pizza Margarita',ar:'بيتزا مارغريتا',price:4.000,emoji:'🍕',desc:'Homemade dough with tomato sauce & mozzarella.',img:'images/p4.jpeg'},
+    {id:'p5',name:'Chicken Hawaii Pizza',ar:'بيتزا هاواي الدجاج',price:4.250,emoji:'🍕',desc:'Special dough with cajun-flavoured grilled shredded chicken, pineapple, capsicum & mozzarella.',img:'images/p5.jpeg'},
+    {id:'p6',name:'Fathayir Lebneh',ar:'فطاير لبنة',price:2.250,emoji:'🫓',desc:'Special dough topped with lebneh & olive oil.',img:'images/p6.jpeg'},
+    {id:'p7',name:'Fathayir Cheese',ar:'فطاير الجبن',price:2.500,emoji:'🫓',desc:'Special dough topped with cheese.',img:'images/p7.jpeg'},
+    {id:'p8',name:'Fathayir Zaatar',ar:'فطاير زعتر',price:2.250,emoji:'🫓',desc:'Special dough topped with zaatar.',img:'images/p8.jpeg'},
+    {id:'p9',name:'Fathayir Kashkavan',ar:'فطاير قشقوان',price:2.500,emoji:'🫓',desc:'Homemade dough with kashkavan cheese.',img:'images/p9.jpeg'},
+  ],
+  juices:[
+    {id:'j1',name:'Fresh Orange Juice',ar:'عصير برتقال',price:2.000,emoji:'🍊',desc:'',img:'images/j1.jpg'},
+    {id:'j2',name:'Strawberry Juice',ar:'عصير فراولة',price:2.250,emoji:'🍓',desc:'',img:'images/j2.jpeg'},
+    {id:'j3',name:'Fresh Pineapple Juice',ar:'عصير أناناس',price:2.250,emoji:'🍍',desc:'',img:'images/j3.jpg'},
+    {id:'j4',name:'Fresh Lemon Mint Juice',ar:'عصير ليمون نعناع',price:2.000,emoji:'🍋',desc:'',img:'images/j4.jpeg'},
+    {id:'j5',name:'Fresh Kiwi Juice',ar:'عصير كيوي',price:2.250,emoji:'🥝',desc:'',img:'images/j5.jpeg'},
+    {id:'j6',name:'Fresh Pomegranate Juice',ar:'عصير الرمان',price:2.750,emoji:'🍎',desc:'',img:'images/j6.jpeg'},
+    {id:'j7',name:'Fresh Avocado Juice',ar:'عصير أفوكادو',price:2.500,emoji:'🥑',desc:'',img:'images/j7.jpeg'},
+    {id:'j8',name:'Mango Juice',ar:'عصير المانجو',price:2.250,emoji:'🥭',desc:'',img:'images/j8.jpeg'},
+  ],
+  mocktails:[
+    {id:'mc1',name:'Piñacolada',ar:'بيناكولادا',price:2.500,emoji:'🍹',desc:'Fresh pineapple juice blended with coconut cream.',img:'images/mc1.jpeg'},
+    {id:'mc2',name:'Tropical 34 Lounge Cocktail',ar:'كوكتيل تروبيكال',price:2.500,emoji:'🍹',desc:'Orange, mango & strawberry juice with grenadine — topped with small cut fruits & ice cream.',img:'images/mc2.jpeg'},
+    {id:'mc3',name:'Cocktail Layers',ar:'كوكتيل طبقات',price:2.250,emoji:'🍹',desc:'Mango, strawberry & banana.',img:'images/mc3.jpeg'},
+    {id:'mc4',name:'Chocolate Milkshake',ar:'ميلك شيك شوكولاتة',price:2.250,emoji:'🍫',desc:'',img:''},
+    {id:'mc5',name:'Strawberry Milkshake',ar:'ميلك شيك فراولة',price:2.250,emoji:'🍓',desc:'',img:'images/mc5.jpeg'},
+    {id:'mc6',name:'Banana Milkshake',ar:'حليب بالموز',price:2.000,emoji:'🍌',desc:'',img:'images/mc6.jpeg'},
+    {id:'mc7',name:'Mango Lassi',ar:'مانجو لاسي',price:2.000,emoji:'🥭',desc:'Yogurt blended with mango juice & rose syrup.',img:'images/mc7.jpeg'},
+  ],
+  mojito:[
+    {id:'mo1',name:'Classic Mojito',ar:'موهيتو كلاسيك',price:2.250,emoji:'🍃',desc:'',img:'images/mo1.jpeg'},
+    {id:'mo2',name:'Strawberry Mojito',ar:'موجيتو فراولة',price:2.250,emoji:'🍓',desc:'',img:'images/mo2.jpeg'},
+    {id:'mo3',name:'Blackberry Mojito',ar:'موجيتو التوت الأسود',price:2.250,emoji:'🫐',desc:'',img:'images/mo3.jpeg'},
+    {id:'mo4',name:'Green Apple Mojito',ar:'موجيتو التفاح الأخضر',price:2.250,emoji:'🍏',desc:'',img:'images/mo4.jpeg'},
+    {id:'mo5',name:'Blue Sky Mojito',ar:'موجيتو بلوسكاي',price:2.250,emoji:'💙',desc:'',img:'images/mo5.jpeg'},
+    {id:'mo6',name:'Lavender Mojito',ar:'موهيتو لافندر',price:2.250,emoji:'💜',desc:'',img:'images/mo6.jpeg'},
+    {id:'mo7',name:'Passion Fruit Mojito',ar:'موهيتو فاكهة الشغف',price:2.250,emoji:'🌺',desc:'',img:'images/mo7.jpeg'},
+    {id:'mo8',name:'Lychee Mojito',ar:'موهيتو الليتشي',price:2.250,emoji:'🍈',desc:'',img:'images/mo8.jpeg'},
+    {id:'mo9',name:'Jabuticaba Mojito',ar:'موهيتو جابوتيكابا',price:2.250,emoji:'🍇',desc:'',img:'images/mo9.jpg'},
+    {id:'mo10',name:'Tropical Fruit Mojito',ar:'موهيتو فواكه',price:2.500,emoji:'🌴',desc:'',img:'images/mo10.jpeg'},
+  ],
+  'cold-bev':[
+    {id:'cb1',name:'Super — Regular / Diet',ar:'',price:1.750,emoji:'🥤',desc:'',img:''},
+    {id:'cb2',name:'Super with Choice of Sauce',ar:'',price:2.250,emoji:'🥤',desc:'',img:''},
+    {id:'cb3',name:'Iced Tea',ar:'شاي مثلج',price:2.000,emoji:'🍵',desc:'',img:''},
+    {id:'cb4',name:'Perrier',ar:'ماء بيريه',price:1.250,emoji:'💧',desc:'',img:''},
+    {id:'cb5',name:'Soft Drinks',ar:'المشروبات الغازية',price:1.000,emoji:'🥤',desc:'',img:''},
+    {id:'cb6',name:'Vimto',ar:'فيمتو',price:2.000,emoji:'🍇',desc:'',img:''},
+    {id:'cb7',name:'Mineral Water Large',ar:'ماء معدني كبير',price:1.750,emoji:'💧',desc:'',img:''},
+    {id:'cb8',name:'Mineral Water Small',ar:'ماء معدني صغير',price:1.000,emoji:'💧',desc:'',img:''},
+  ],
+  'hot-drinks':[
+    {id:'hd1',name:'Tea Pot — Small',ar:'براد شاي صغير',price:2.000,emoji:'🫖',desc:'',img:'images/hd1.jpeg'},
+    {id:'hd2',name:'Tea Pot — Large',ar:'إبريق شاي كبير',price:3.500,emoji:'🫖',desc:'',img:'images/hd2.jpeg'},
+    {id:'hd3',name:'Karak Tea — Big',ar:'كرك كبير',price:3.750,emoji:'☕',desc:'',img:'images/hd3.jpeg'},
+    {id:'hd4',name:'Karak Tea — Small',ar:'كرك صغير',price:2.250,emoji:'☕',desc:'',img:'images/hd4.jpeg'},
+    {id:'hd5',name:'Arabic Coffee Dalla',ar:'دلة القهوة العربية',price:4.500,emoji:'☕',desc:'',img:'images/hd5.jpeg'},
+    {id:'hd6',name:'French Coffee',ar:'قهوة فرنسية',price:1.500,emoji:'☕',desc:'',img:'images/hd6.jpeg'},
+    {id:'hd7',name:'Turkish Coffee',ar:'قهوة تركية',price:1.500,emoji:'☕',desc:'',img:'images/hd7.jpeg'},
+    {id:'hd8',name:'Espresso',ar:'إسبرسو',price:1.500,emoji:'☕',desc:'',img:'images/hd8.jpeg'},
+    {id:'hd9',name:'Double Espresso',ar:'إسبرسو مضاعف',price:1.750,emoji:'☕',desc:'',img:'images/hd9.jpeg'},
+    {id:'hd10',name:'Espresso Macchiato',ar:'إسبرسو ماكياتو',price:1.750,emoji:'☕',desc:'',img:'images/hd10.jpg'},
+  ],
+  sweets:[
+    {id:'sw1',name:'San Sebastian Cheesecake',ar:'تشيز كيك سان سيباستيان',price:3.750,emoji:'🍰',desc:'Crustless cheesecake with creamy interior & signature burnt top.',img:'images/sw1.jpeg'},
+    {id:'sw2',name:'Tropical Fondue',ar:'تروبكال فونده',price:5.500,emoji:'🍫',desc:'',img:'images/sw2.jpeg'},
+    {id:'sw3',name:'Molten Bueno Cake',ar:'كعكة مولتن بوينو',price:3.750,emoji:'🎂',desc:'Cocoa cake topped with Belgian caramel cocoa, Bueno sauce & chocolate sauce.',img:'images/sw3.jpeg'},
+    {id:'sw4',name:'Kunafa Choco Cheese',ar:'كنافة شوكولاتة جبن',price:4.000,emoji:'🍮',desc:'Brownie cake layers with kunafa mixture, pistachio cheese cream — Belgian chocolate sauce.',img:'images/sw4.jpeg'},
+    {id:'sw5',name:'Molten Kit Kat Cake',ar:'كعكة كيت كات مولتن',price:3.750,emoji:'🎂',desc:'Chocolate cake covered in Belgian chocolate with Kit Kat pieces & Kit Kat sauce.',img:'images/sw5.jpg'},
+    {id:'sw6',name:'Chocolate Flake Jar',ar:'برطمان رقائق الشوكولاتة',price:3.750,emoji:'🫙',desc:'Layers of cocoa cake covered with chocolate sauce & flake chocolate.',img:'images/sw6.jpeg'},
+    {id:'sw7',name:'Kinder Jar',ar:'جرة كيندر',price:3.750,emoji:'🫙',desc:'Thin cocoa cake layers with chocolate & Kinder sauce, topped with Kinder grains.',img:'images/sw7.jpeg'},
+    {id:'sw8',name:'Kinder Brownie',ar:'كيندر براوني',price:3.250,emoji:'🍫',desc:'Homemade brownie with Kinder chocolate sauce — served with ice cream & chocolate sauce.',img:'images/sw8.jpeg'},
+    {id:'sw9',name:'Brownie Symphony',ar:'سمفونية براوني',price:3.500,emoji:'🍫',desc:'Bite-sized assorted brownie cubes with a scoop of classic vanilla ice cream.',img:'images/sw9.jpeg'},
+    {id:'sw10',name:'Cake Brownie',ar:'براوني كيك',price:3.000,emoji:'🎂',desc:'Homemade special brownie — ice cream topped with chocolate sauce.',img:'images/sw10.jpeg'},
+    {id:'sw11',name:'Cocoa Cake & Kunafa Jar',ar:'كعكة الكاكاو وجرة الكنافة',price:3.750,emoji:'🫙',desc:'Chocolate cake in a jar with kunafa, pistachio sauce & chocolate sauce.',img:'images/sw11.jpeg'},
+    {id:'sw12',name:'Chocolate Lava Cake',ar:'كعكة الشوكولا',price:3.750,emoji:'🎂',desc:'',img:'images/sw12.jpg'},
+    {id:'sw13',name:'Kinder Lava Cake',ar:'كعكة كيندر لافا',price:3.750,emoji:'🎂',desc:'',img:''},
+    {id:'sw14',name:'Cheesecake — Strawberry / Kinder',ar:'تشيز كيك',price:2.750,emoji:'🍰',desc:'',img:'images/sw14.jpeg'},
+    {id:'sw15',name:'Saffron Cake',ar:'كيك زعفران',price:4.250,emoji:'🌼',desc:'Delicious saffron-flavoured cake — saffron sauce & whipped cream.',img:'images/sw15.jpeg'},
+    {id:'sw16',name:'Chocolate Dipped Strawberries',ar:'فراولة مغطاة بالشوكولاتة',price:3.000,emoji:'🍓',desc:'Fresh strawberries dipped in a choice of 3 kinds of chocolate sauce.',img:'images/sw16.jpeg'},
+    {id:'sw17',name:'Fruit Salad',ar:'سلطة فواكه',price:3.000,emoji:'🍇',desc:'Cubes of mixed fruits with ice cream.',img:'images/sw17.jpg'},
+    {id:'sw18',name:'Crêpe — Mix Fruit',ar:'كريب الفواكه',price:4.000,emoji:'🥞',desc:'',img:'images/sw18.jpeg'},
+    {id:'sw19',name:'Pancake — Big',ar:'بان كيك كبير',price:4.000,emoji:'🥞',desc:'Served with choice of Kinder, Nutella, pistachio or Belgian.',img:'images/sw19.jpeg'},
+    {id:'sw20',name:'Pancake — Small',ar:'بان كيك صغير',price:3.750,emoji:'🥞',desc:'Served with choice of Kinder, Nutella, pistachio or Belgian.',img:'images/sw20.jpeg'},
+    {id:'sw21',name:'Banana Split',ar:'انقسام الموز',price:3.250,emoji:'🍌',desc:'Caramelized banana — honey, nuts & assorted ice cream.',img:'images/sw21.jpeg'},
+    {id:'sw22',name:'Choice of Ice Cream',ar:'اختيار الآيس كريم',price:1.500,emoji:'🍦',desc:'',img:'images/sw22.jpeg'},
+  ],
+  'hot-coffee':[
+    {id:'hc1',name:'Classic Hot Latte',ar:'لاتيه ساخن',price:2.000,emoji:'☕',desc:'',img:'images/hc1.jpeg'},
+    {id:'hc2',name:'Cappuccino',ar:'كابتشينو',price:2.000,emoji:'☕',desc:'',img:'images/hc2.png'},
+    {id:'hc3',name:'Classic Hot Americano',ar:'أمريكانو ساخن',price:2.000,emoji:'☕',desc:'',img:'images/hc3.jpeg'},
+    {id:'hc4',name:'Hot Mocha Latte',ar:'لاتيه موكا ساخن',price:2.250,emoji:'☕',desc:'',img:'images/hc4.jpeg'},
+    {id:'hc5',name:'Hot Caramel Latte',ar:'لاتيه الكراميل الساخن',price:2.250,emoji:'☕',desc:'',img:'images/hc5.jpeg'},
+    {id:'hc6',name:'Hot Salt Caramel Latte',ar:'لاتيه كارميل مملح',price:2.250,emoji:'☕',desc:'',img:'images/hc6.jpeg'},
+    {id:'hc7',name:'Hot Saffron Latte',ar:'لاتيه الزعفران الساخن',price:2.250,emoji:'☕',desc:'',img:'images/hc7.jpeg'},
+    {id:'hc8',name:'Hot Rose Latte',ar:'لاتيه الورد الساخن',price:2.250,emoji:'☕',desc:'',img:'images/hc8.jpeg'},
+    {id:'hc9',name:'Hot Chocolate',ar:'شكولاتة ساخنة',price:2.250,emoji:'☕',desc:'',img:'images/hc9.jpeg'},
+    {id:'hc10',name:'Hot Coconut Latte',ar:'لاتيه جوز الهند',price:2.250,emoji:'☕',desc:'',img:'images/hc10.jpeg'},
+    {id:'hc11',name:'Spanish Latte',ar:'لاتيه إسباني',price:2.250,emoji:'☕',desc:'',img:'images/hc11.jpeg'},
+    {id:'hc12',name:'Matcha Latte',ar:'لاتيه ماتشا',price:2.250,emoji:'🍵',desc:'',img:'images/hc12.jpg'},
+  ],
+  'cold-coffee':[
+    {id:'cc1',name:'Iced Americano',ar:'أمريكانو مثلج',price:2.000,emoji:'🧋',desc:'',img:'images/cc1.jpeg'},
+    {id:'cc2',name:'Iced Spanish Latte',ar:'لاتيه إسباني مثلج',price:2.250,emoji:'🧋',desc:'',img:'images/cc2.jpg'},
+    {id:'cc3',name:'Caramel Latte',ar:'لاتيه الكراميل',price:2.250,emoji:'🧋',desc:'',img:'images/cc3.jpeg'},
+    {id:'cc4',name:'Salted Caramel Latte',ar:'لاتيه الكراميل المملح',price:2.250,emoji:'🧋',desc:'',img:'images/cc4.jpeg'},
+    {id:'cc5',name:'Hazelnut Latte',ar:'لاتيه البندق',price:2.250,emoji:'🧋',desc:'',img:'images/cc5.jpeg'},
+    {id:'cc6',name:'Rose Latte',ar:'ورود الحليب',price:2.250,emoji:'🌹',desc:'',img:'images/cc6.jpeg'},
+    {id:'cc7',name:'Saffron Latte',ar:'لاتيه الزعفران',price:2.250,emoji:'🌼',desc:'',img:'images/cc7.jpeg'},
+    {id:'cc8',name:'Mocha Latte',ar:'موكا لاتيه',price:2.250,emoji:'🧋',desc:'',img:'images/cc8.jpeg'},
+    {id:'cc9',name:'Blue Ocean',ar:'المحيط الأزرق',price:2.250,emoji:'💙',desc:'',img:'images/cc9.jpeg'},
+    {id:'cc10',name:'Frappuccino',ar:'فرابتشينو',price:2.500,emoji:'🧋',desc:'Choice of Caramel, Chocolate, Spanish etc.',img:'images/cc10.jpg'},
+    {id:'cc11',name:'Rose Frappuccino',ar:'فرابتشينو الورد',price:2.500,emoji:'🌹',desc:'',img:'images/cc11.jpg'},
+    {id:'cc12',name:'Iced Spanish Matcha',ar:'ماتشا إسباني مثلج',price:2.500,emoji:'🍵',desc:'',img:'images/cc12.jpg'},
+    {id:'cc13',name:'Iced Mango Matcha',ar:'مانجو ماتشا مثلج',price:2.500,emoji:'🥭',desc:'',img:'images/cc13.jpg'},
+    {id:'cc14',name:'Iced Strawberry Matcha',ar:'ماتشا الفراولة المثلجة',price:2.500,emoji:'🍓',desc:'',img:'images/cc14.jpg'},
+    {id:'cc15',name:'Affogato Coffee',ar:'افوكاتو',price:2.250,emoji:'🍦',desc:'2 scoops of vanilla ice cream drowned in a shot of hot espresso.',img:'images/cc15.jpg'},
+  ],
+  celebration:[
+    {id:'cel1',name:'Birthday Table for 2',ar:'طاولة الاحتفال لشخصين',price:20.000,emoji:'🎂',desc:'Celebration table for 2 persons — flower petals, candles, cake, sparkling juice or Arabic coffee.',img:'images/cel1.jpg'},
+    {id:'cel2',name:'Birthday Table for 5–6',ar:'طاولة عيد الميلاد',price:35.000,emoji:'🎉',desc:'Birthday table for 5–6 persons — flower petals, candles, cake of choice, sparkling juice & Arabic coffee.',img:'images/cel2.jpg'},
+    {id:'cel3',name:'Premium Birthday Table',ar:'طاولة عيد ميلاد مميزة',price:48.000,badge:'Premium',emoji:'✨',desc:'Specially decorated table for 4–6 persons — fresh flower petals, candles, balloons, Chocolate & Red Velvet cake, sparkling grape juice & Arabic coffee.',img:'images/cel3.jpg'},
+  ]
+};
+
+/* ════════════════════════════════════════
+   IMAGE INJECTION GUIDE
+   ─────────────────────────────────────
+   Create a folder called "images/" next to this HTML file.
+   Name each photo using the item ID, e.g.:
+     images/b1.jpg   → 34 Morning Breakfast
+     images/s1.jpg   → Kale Salad
+     images/g1.jpg   → Mixed Grill
+     ... and so on
+
+   OR: Set img:'images/yourfile.jpg' directly
+   in the MENU data above for any item.
+
+   The easiest workflow:
+   1. Open admin.html
+   2. Use the Image Manager tab to upload per-item
+   3. Images auto-save to localStorage & appear here
+════════════════════════════════════════ */
+
+/* ════════════════════════════════════════
+   CART STATE
+════════════════════════════════════════ */
+let cart = JSON.parse(localStorage.getItem('34cart') || '[]');
+
+function saveCart(){ localStorage.setItem('34cart', JSON.stringify(cart)); }
+
+function addToCart(id, category) {
+  const item = MENU[category].find(i => i.id === id);
+  if (!item) return;
+  const existing = cart.find(c => c.id === id);
+  if (existing) existing.qty++;
+  else cart.push({id, name:item.name, price:item.price, qty:1, emoji:item.emoji, img:item.img});
+  saveCart(); renderCart(); updateCartCount();
+  showToast('Added: ' + item.name);
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(c => c.id !== id);
+  saveCart(); renderCart(); updateCartCount();
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(c => c.id === id);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  saveCart(); renderCart(); updateCartCount();
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s,i) => s + i.qty, 0);
+  const el = document.getElementById('cartCount');
+  el.textContent = total;
+  el.classList.toggle('show', total > 0);
+}
+
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  const subtotalEl = document.getElementById('cartSubtotal');
+  if (!cart.length) {
+    container.innerHTML = '<div class="cart-empty">Your cart is empty.<br><small style="opacity:.6">Add items from the menu.</small></div>';
+    subtotalEl.textContent = 'KWD 0.000';
+    return;
+  }
+  let total = 0;
+  container.innerHTML = cart.map(item => {
+    total += item.price * item.qty;
+    const imgHtml = item.img
+      ? `<img class="ci-img" src="${item.img}" alt="${item.name}" onerror="this.style.display='none'">`
+      : `<div class="ci-img-ph">${item.emoji}</div>`;
+    return `<div class="cart-item">
+      ${imgHtml}
+      <div class="ci-info">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-price">KWD ${item.price.toFixed(3)}</div>
+        <div class="ci-qty">
+          <button class="ci-qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
+          <span class="ci-qty-val">${item.qty}</span>
+          <button class="ci-qty-btn" onclick="changeQty('${item.id}',1)">+</button>
+          <button class="ci-remove" onclick="removeFromCart('${item.id}')">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  subtotalEl.textContent = 'KWD ' + total.toFixed(3);
+}
+
+function toggleCart() {
+  document.getElementById('cartDrawer').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+
+function checkout() {
+  if (!cart.length) { showToast('Cart is empty!'); return; }
+  const lines = cart.map(i => `• ${i.name} x${i.qty} = KWD ${(i.price*i.qty).toFixed(3)}`).join('\n');
+  const total = cart.reduce((s,i) => s + i.price*i.qty, 0);
+  const msg = encodeURIComponent(`🍽 *Order from 34 Lounge*\n\n${lines}\n\n*Total: KWD ${total.toFixed(3)}*\n\nPlease confirm my order. Thank you!`);
+  window.open(`https://wa.me/96566661404?text=${msg}`, '_blank');
+}
+
+/* ════════════════════════════════════════
+   RENDER ITEMS
+════════════════════════════════════════ */
+// Load images from backoffice localStorage
+function getImg(id, fallbackImg) {
+  return localStorage.getItem('img_' + id) || fallbackImg || '';
+}
+
+function imgFallback(el, emoji) {
+  el.parentElement.innerHTML = `<div class="item-img-ph">${emoji}<small>No Image</small></div>`;
+}
+
+function modalImgFallback(el, emoji) {
+  el.parentElement.innerHTML = `<div class="modal-img-ph">${emoji}</div>`;
+}
+
+function renderCard(item, category) {
+  const imgSrc = getImg(item.id, item.img);
+  const imgHtml = imgSrc
+    ? `<div class="item-img-wrap"><img src="${imgSrc}" alt="${item.name}" loading="lazy" onerror="imgFallback(this,'${item.emoji}')"/>${item.badge?`<span class="item-badge">${item.badge}</span>`:''}</div>`
+    : `<div class="item-img-ph">${item.emoji}<small>No Image</small>${item.badge?`<span class="item-badge" style="position:static;display:block;margin-top:.3rem">${item.badge}</span>`:''}</div>`;
+  return `<div class="item-card" data-id="${item.id}" data-cat="${category}">
+    ${imgHtml}
+    <div class="item-body">
+      <div class="item-name">${item.name}</div>
+      ${item.ar?`<div class="item-name-ar">${item.ar}</div>`:''}
+      ${item.desc?`<div class="item-desc">${item.desc}</div>`:''}
+      <div class="item-footer">
+        <div class="item-price">KWD ${item.price.toFixed(3)}</div>
+        <button class="add-btn" onclick="addToCart('${item.id}','${category}')">+</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderAllMenus() {
+  Object.keys(MENU).forEach(cat => {
+    const grid = document.getElementById('grid-' + cat);
+    if (grid) grid.innerHTML = MENU[cat].map(item => renderCard(item, cat)).join('');
+  });
+}
+
+/* ════════════════════════════════════════
+   SEARCH
+════════════════════════════════════════ */
+const allItems = [];
+Object.keys(MENU).forEach(cat => MENU[cat].forEach(item => allItems.push({...item, category:cat})));
+
+document.getElementById('searchInput').addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  const box = document.getElementById('searchResults');
+  if (!q) { box.classList.remove('open'); return; }
+  const matches = allItems.filter(i => i.name.toLowerCase().includes(q) || (i.ar && i.ar.includes(q)) || (i.desc && i.desc.toLowerCase().includes(q))).slice(0, 8);
+  if (!matches.length) { box.classList.remove('open'); return; }
+  const imgSrc = id => getImg(id, '');
+  box.innerHTML = matches.map(i => {
+    const src = imgSrc(i.id);
+    const img = src ? `<img class="sr-img" src="${src}" alt="${i.name}">` : `<div class="sr-img-ph">${i.emoji}</div>`;
+    return `<div class="sr-item" onclick="scrollToItem('${i.id}','${i.category}')">
+      ${img}
+      <div><div class="sr-name">${i.name}${i.ar?` · <span style="direction:rtl;font-size:.75rem;color:var(--gold-dim)">${i.ar}</span>`:''}</div><div class="sr-price">KWD ${i.price.toFixed(3)}</div></div>
+    </div>`;
+  }).join('');
+  box.classList.add('open');
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap')) document.getElementById('searchResults').classList.remove('open');
+});
+
+function scrollToItem(id, category) {
+  document.getElementById('searchResults').classList.remove('open');
+  document.getElementById('searchInput').value = '';
+  const section = document.getElementById(category);
+  if (section) { section.scrollIntoView({behavior:'smooth'}); }
+  setTimeout(() => {
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) { card.style.outline = '2px solid var(--gold)'; setTimeout(() => card.style.outline = '', 2000); }
+  }, 600);
+}
+
+/* ════════════════════════════════════════
+   HERO SWIPER
+════════════════════════════════════════ */
+let swiperIdx = 0;
+const slides = document.querySelectorAll('.slide');
+const track = document.getElementById('swiperTrack');
+const dotsWrap = document.getElementById('swiperDots');
+
+// Build dots
+slides.forEach((_,i) => {
+  const d = document.createElement('div');
+  d.className = 'swiper-dot' + (i===0?' active':'');
+  d.onclick = () => swiperGo(i);
+  dotsWrap.appendChild(d);
+});
+
+function swiperGo(n) {
+  slides[swiperIdx].classList.remove('active');
+  document.querySelectorAll('.swiper-dot')[swiperIdx].classList.remove('active');
+  swiperIdx = (n + slides.length) % slides.length;
+  track.style.transform = `translateX(-${swiperIdx*100}%)`;
+  slides[swiperIdx].classList.add('active');
+  document.querySelectorAll('.swiper-dot')[swiperIdx].classList.add('active');
+}
+
+function swiperMove(dir) { swiperGo(swiperIdx + dir); }
+
+// Auto-advance
+let swiperTimer = setInterval(() => swiperMove(1), 5500);
+document.getElementById('heroSwiper').addEventListener('mouseenter', () => clearInterval(swiperTimer));
+document.getElementById('heroSwiper').addEventListener('mouseleave', () => { swiperTimer = setInterval(() => swiperMove(1), 5500); });
+
+// Touch swipe
+let touchX = 0;
+document.getElementById('heroSwiper').addEventListener('touchstart', e => touchX = e.touches[0].clientX, {passive:true});
+document.getElementById('heroSwiper').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (Math.abs(dx) > 50) swiperMove(dx < 0 ? 1 : -1);
+}, {passive:true});
+
+/* ════════════════════════════════════════
+   CATEGORY NAV — ACTIVE ON SCROLL
+════════════════════════════════════════ */
+const catItems = document.querySelectorAll('.cat-item');
+const sections = document.querySelectorAll('section[id]');
+const headerH = () => document.querySelector('.site-header').offsetHeight + 20;
+
+catItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const sec = document.getElementById(item.dataset.target);
+    if (sec) sec.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      catItems.forEach(c => {
+        const active = c.dataset.target === id;
+        c.classList.toggle('active', active);
+        if (active) c.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+      });
+    }
+  });
+}, {rootMargin: `-${130}px 0px -60% 0px`});
+
+sections.forEach(s => navObs.observe(s));
+
+/* ════════════════════════════════════════
+   SCROLL REVEAL
+════════════════════════════════════════ */
+new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, {threshold:0.05}).observe || (() => {})();
+
+const revObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, {threshold:0.05});
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+/* ════════════════════════════════════════
+   WHATSAPP BUBBLE
+════════════════════════════════════════ */
+function toggleWA() {
+  document.getElementById('waChatBox').classList.toggle('open');
+}
+
+function waSend() {
+  const input = document.getElementById('waInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  // Open WhatsApp with pre-filled message
+  window.open(`https://wa.me/96566661404?text=${encodeURIComponent(msg)}`, '_blank');
+  input.value = '';
+}
+
+function waKeydown(e) { if (e.key === 'Enter') waSend(); }
+
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function toggleMobileMenu() { /* mobile nav expand - extend as needed */ }
+
+/* ════════════════════════════════════════
+   LANGUAGE TOGGLE (EN ↔ AR)
+════════════════════════════════════════ */
+function toggleLanguage() {
+  const isAr = document.getElementById('langToggle').checked;
+  document.body.classList.toggle('ar-mode', isAr);
+  document.getElementById('lblEn').classList.toggle('active-lang', !isAr);
+  document.getElementById('lblAr').classList.toggle('active-lang', isAr);
+  document.documentElement.lang = isAr ? 'ar' : 'en';
+  localStorage.setItem('34lang', isAr ? 'ar' : 'en');
+}
+// Restore saved language
+(function(){
+  if (localStorage.getItem('34lang') === 'ar') {
+    document.getElementById('langToggle').checked = true;
+    document.body.classList.add('ar-mode');
+    document.getElementById('lblEn').classList.remove('active-lang');
+    document.getElementById('lblAr').classList.add('active-lang');
+    document.documentElement.lang = 'ar';
+  }
+})();
+
+/* ════════════════════════════════════════
+   ITEM DETAIL MODAL
+════════════════════════════════════════ */
+const CATEGORY_LABELS = {
+  breakfast:'Breakfast · فطور', salad:'Salads · سلطة', soup:'Soups · شوربة',
+  mezza:'Mezza · مقبلات', appetizers:'Appetizers · مقبلات', burgers:'Burgers · برجر',
+  mains:'Main Course · الطبق الرئيسي', grills:'Grills · مشويات', pizza:'Pizza & Fathayir · بيتزا',
+  juices:'Fresh Juices · عصائر', mocktails:'Mocktails · موكتيل', mojito:'Mojito · موهيتو',
+  'cold-bev':'Cold Beverages · مشروبات باردة', 'hot-drinks':'Hot Drinks · مشروبات ساخنة',
+  sweets:'Sweets · حلو', 'hot-coffee':'Hot Coffee · قهوة ساخنة',
+  'cold-coffee':'Cold Coffee · قهوة باردة', celebration:'Celebration · احتفال'
+};
+
+function openModal(itemId, category) {
+  const item = MENU[category].find(i => i.id === itemId);
+  if (!item) return;
+  const imgSrc = getImg(item.id, item.img);
+  const isAr = document.body.classList.contains('ar-mode');
+
+  const imgBlock = imgSrc
+    ? `<div class="modal-img-wrap">
+        <img src="${imgSrc}" alt="${item.name}" onerror="modalImgFallback(this,'${item.emoji}')"/>
+        ${item.badge ? `<div class="modal-badge-row"><span class="item-badge">${item.badge}</span></div>` : ''}
+        <label class="modal-img-upload" title="Replace image">
+          📷 Replace Image
+          <input type="file" accept="image/*" onchange="handleImgUpload(event,'${item.id}')"/>
+        </label>
+      </div>`
+    : `<div style="position:relative">
+        <div class="modal-img-ph">${item.emoji}
+          <small style="font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.2em;color:var(--gold-dim);margin-top:.3rem">NO IMAGE YET</small>
+        </div>
+        ${item.badge ? `<div class="modal-badge-row"><span class="item-badge">${item.badge}</span></div>` : ''}
+        <label class="modal-img-upload" title="Upload image">
+          📷 Upload Image
+          <input type="file" accept="image/*" onchange="handleImgUpload(event,'${item.id}')"/>
+        </label>
+      </div>`;
+
+  document.getElementById('modalInner').innerHTML = `
+    ${imgBlock}
+    <div class="modal-body">
+      <div class="modal-category-tag">${CATEGORY_LABELS[category] || category}</div>
+      <div class="modal-name">${item.name}</div>
+      <div class="modal-name-ar" style="${isAr?'':'font-size:1rem'}">${item.ar || ''}</div>
+      <div class="modal-price-row">
+        <div class="modal-price">KWD ${item.price.toFixed(3)}</div>
+        <div class="modal-price-label">Kuwaiti Dinar · دينار كويتي</div>
+      </div>
+      ${item.desc ? `<div class="modal-divider"></div>
+      <div class="modal-desc-title">About this dish</div>
+      <div class="modal-desc">${item.desc}</div>
+      <div class="modal-desc-ar">${translateDescAr(item.id, item.desc)}</div>` : ''}
+      <div class="modal-actions">
+        <button class="modal-add-btn" onclick="addToCart('${item.id}','${category}');showToast('${item.name} added to cart')">
+          + Add to Order — KWD ${item.price.toFixed(3)}
+        </button>
+        <a href="admin.html#item-${item.id}" class="modal-edit-btn">⚙️ Edit in Back Office</a>
+      </div>
+      <div class="modal-img-note">💡 Upload an image above — saved instantly to this device</div>
+    </div>`;
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalBox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.getElementById('modalBox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Desc placeholder translations (for items without Arabic desc, show note)
+function translateDescAr(id, desc) {
+  // Items that have Arabic descriptions hardcoded can be added here
+  // For now show a note pointing to back office
+  return desc ? `<span style="color:var(--gold-dim);font-size:.75rem">الوصف بالعربية: أضفه من لوحة التحكم ← Back Office</span>` : '';
+}
+
+/* ════════════════════════════════════════
+   IMAGE UPLOAD VIA MODAL
+════════════════════════════════════════ */
+function handleImgUpload(event, itemId) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    localStorage.setItem('img_' + itemId, dataUrl);
+    showToast('✓ Image saved for ' + itemId);
+    // Refresh the card in the grid
+    const card = document.querySelector(`[data-id="${itemId}"]`);
+    if (card) {
+      const cat = card.dataset.cat;
+      const item = MENU[cat] && MENU[cat].find(i => i.id === itemId);
+      if (item) { item.img = dataUrl; card.outerHTML = renderCard(item, cat); }
+    }
+    // Refresh modal image
+    const modalImg = document.querySelector('.modal-img-wrap img');
+    if (modalImg) modalImg.src = dataUrl;
+    const modalPh = document.querySelector('.modal-img-ph');
+    if (modalPh) {
+      modalPh.parentElement.innerHTML = `<div class="modal-img-wrap">
+        <img src="${dataUrl}" alt="item" style="width:100%;height:100%;object-fit:cover"/>
+        <label class="modal-img-upload">📷 Replace Image<input type="file" accept="image/*" onchange="handleImgUpload(event,'${itemId}')"/></label>
+      </div>`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ════════════════════════════════════════
+   MAKE CARDS CLICKABLE (open modal)
+   — Override renderCard to attach click
+════════════════════════════════════════ */
+// Patch: delegate click on item cards
+document.addEventListener('click', function(e) {
+  const card = e.target.closest('.item-card');
+  if (!card) return;
+  // Don't open modal if clicking the add button
+  if (e.target.closest('.add-btn')) return;
+  const id = card.dataset.id;
+  const cat = card.dataset.cat;
+  if (id && cat) openModal(id, cat);
+});
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+renderAllMenus();
+renderCart();
+updateCartCount();
+</script>
+</body>
+</html>
