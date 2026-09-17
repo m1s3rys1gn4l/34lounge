@@ -224,6 +224,20 @@ catItems.forEach(item => {
   });
 });
 
+// Smooth-scroll for in-page hash links (hero CTA buttons etc.) now that
+// global `scroll-behavior:smooth` on <html> was removed — it caused janky,
+// stepped native touch-scrolling on several mobile browsers.
+document.addEventListener('click', e => {
+  const link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+  const id = link.getAttribute('href').slice(1);
+  const target = id && document.getElementById(id);
+  if (target) {
+    e.preventDefault();
+    target.scrollIntoView({behavior:'smooth'});
+  }
+});
+
 const navObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {

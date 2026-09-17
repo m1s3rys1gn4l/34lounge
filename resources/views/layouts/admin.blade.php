@@ -44,6 +44,9 @@
     <a class="nav-item{{ request()->routeIs('admin.qr-code.*') ? ' active' : '' }}" href="{{ route('admin.qr-code.index') }}" style="text-decoration:none">
       <span class="nav-icon">🔲</span> QR Code
     </a>
+    <a class="nav-item{{ request()->routeIs('admin.profile.*') ? ' active' : '' }}" href="{{ route('admin.profile.edit') }}" style="text-decoration:none">
+      <span class="nav-icon">👤</span> My Account
+    </a>
   </nav>
 
   <div class="sidebar-footer">

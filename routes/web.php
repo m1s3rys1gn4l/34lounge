@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\MenuItemController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\QrCodeController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\MenuController;
@@ -30,5 +31,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('qr-code', [QrCodeController::class, 'index'])->name('qr-code.index');
         Route::get('qr-code/download', [QrCodeController::class, 'download'])->name('qr-code.download');
         Route::get('qr-code/card/download', [QrCodeController::class, 'downloadCard'])->name('qr-code.card-download');
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile/email', [ProfileController::class, 'updateEmail'])->name('profile.update-email');
+        Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
     });
 });
