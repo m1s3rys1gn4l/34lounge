@@ -211,11 +211,23 @@ document.getElementById('heroSwiper').addEventListener('touchend', e => {
 }, {passive:true});
 
 /* ════════════════════════════════════════
-   CATEGORY NAV — ACTIVE ON SCROLL
+   CATEGORY NAV — sticky bar + active section tracking
+   A single passive, rAF-throttled scroll listener replaces the old
+   IntersectionObserver-per-section approach. It only touches the DOM
+   when the active category actually changes, so it stays cheap even
+   on long scroll-throughs of the full menu.
 ════════════════════════════════════════ */
+const catNav = document.querySelector('.cat-nav');
 const catItems = document.querySelectorAll('.cat-item');
-const sections = document.querySelectorAll('section[id]');
-const headerH = () => document.querySelector('.site-header').offsetHeight + 20;
+const sections = Array.from(document.querySelectorAll('section[id]'));
+
+function syncStickyOffset() {
+  const offset = catNav.offsetHeight;
+  document.documentElement.style.scrollPaddingTop = offset + 'px';
+  return offset;
+}
+let stickyOffset = syncStickyOffset();
+window.addEventListener('resize', () => { stickyOffset = syncStickyOffset(); }, {passive:true});
 
 catItems.forEach(item => {
   item.addEventListener('click', () => {
@@ -224,9 +236,7 @@ catItems.forEach(item => {
   });
 });
 
-// Smooth-scroll for in-page hash links (hero CTA buttons etc.) now that
-// global `scroll-behavior:smooth` on <html> was removed — it caused janky,
-// stepped native touch-scrolling on several mobile browsers.
+// Smooth-scroll for in-page hash links (hero CTA buttons etc.).
 document.addEventListener('click', e => {
   const link = e.target.closest('a[href^="#"]');
   if (!link) return;
@@ -238,32 +248,41 @@ document.addEventListener('click', e => {
   }
 });
 
-const navObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const id = e.target.id;
-      catItems.forEach(c => {
-        const active = c.dataset.target === id;
-        c.classList.toggle('active', active);
-        if (active) c.scrollIntoView({behavior:'auto', block:'nearest', inline:'center'});
-      });
-    }
-  });
-}, {rootMargin: `-${130}px 0px -60% 0px`});
+let activeCategoryId = null;
+function updateActiveCategory() {
+  const probeY = stickyOffset + 4;
+  let current = sections[0];
+  for (const sec of sections) {
+    if (sec.getBoundingClientRect().top <= probeY) current = sec;
+    else break;
+  }
+  if (!current || current.id === activeCategoryId) return;
+  activeCategoryId = current.id;
+  catItems.forEach(c => c.classList.toggle('active', c.dataset.target === activeCategoryId));
+  const activeItem = document.querySelector(`.cat-item[data-target="${activeCategoryId}"]`);
+  if (activeItem) centerCatItemHorizontally(activeItem);
+}
 
-sections.forEach(s => navObs.observe(s));
+// Center the active tab within the horizontally-scrolling nav strip only.
+// (scrollIntoView() was used before, but since the nav sits inside a
+// position:sticky container, the browser also tried to fix up the page's
+// *vertical* scroll to match the element's real document position — which
+// visually snapped the whole page back to the top. Moving scrollLeft
+// directly can never touch the vertical axis, so that bug can't happen.)
+function centerCatItemHorizontally(item) {
+  const container = item.parentElement;
+  const target = item.offsetLeft - (container.clientWidth - item.clientWidth) / 2;
+  container.scrollTo({left: Math.max(0, target), behavior:'auto'});
+}
 
-/* ════════════════════════════════════════
-   SCROLL REVEAL
-════════════════════════════════════════ */
-new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-}, {threshold:0.05}).observe || (() => {})();
+let scrollTicking = false;
+window.addEventListener('scroll', () => {
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(() => { updateActiveCategory(); scrollTicking = false; });
+}, {passive:true});
 
-const revObs = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-}, {threshold:0.05});
-document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+updateActiveCategory();
 
 /* ════════════════════════════════════════
    WHATSAPP BUBBLE

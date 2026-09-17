@@ -167,7 +167,7 @@
 
 <!-- ══════════ MENU SECTIONS ══════════ -->
 @foreach($categories as $cat)
-<section class="section reveal" id="{{ $cat->key }}" data-category="{{ $cat->key }}">
+<section class="section" id="{{ $cat->key }}" data-category="{{ $cat->key }}">
   <div class="section-header">
     <div class="sec-line"></div>
     <div><div class="sec-title">{{ $cat->title }}</div><div class="sec-title-ar">{{ $cat->title_ar }}</div></div>
