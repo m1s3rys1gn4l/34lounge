@@ -314,8 +314,6 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-function toggleMobileMenu() { /* mobile nav expand - extend as needed */ }
-
 /* ════════════════════════════════════════
    LANGUAGE TOGGLE (EN ↔ AR)
 ════════════════════════════════════════ */

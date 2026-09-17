@@ -37,11 +37,8 @@
       <a href="34lounge_reservation.html" class="hdr-btn">🗓 Reserve</a>
       <a href="{{ route('admin.dashboard') }}" class="hdr-btn" title="Back Office">⚙️</a>
       <button class="hdr-btn cart-btn primary" onclick="toggleCart()">
-        🛒 Cart
+        🛒 <span class="cart-label">Cart</span>
         <span class="cart-count" id="cartCount">0</span>
-      </button>
-      <button class="ham" onclick="toggleMobileMenu()" aria-label="Menu">
-        <span></span><span></span><span></span>
       </button>
     </div>
   </div>
