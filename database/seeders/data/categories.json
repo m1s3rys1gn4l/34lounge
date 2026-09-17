@@ -1,0 +1,146 @@
+[
+  {
+    "key": "breakfast",
+    "emoji": "🍳",
+    "label": "Breakfast",
+    "sort_order": 0,
+    "title": "Breakfast",
+    "title_ar": "فطور"
+  },
+  {
+    "key": "salad",
+    "emoji": "🥗",
+    "label": "Salads",
+    "sort_order": 1,
+    "title": "Salads",
+    "title_ar": "سلطة"
+  },
+  {
+    "key": "soup",
+    "emoji": "🍲",
+    "label": "Soups",
+    "sort_order": 2,
+    "title": "Soups",
+    "title_ar": "شوربة"
+  },
+  {
+    "key": "mezza",
+    "emoji": "🫙",
+    "label": "Mezza",
+    "sort_order": 3,
+    "title": "Mezza — Cold & Hot",
+    "title_ar": "مقبلات باردة وساخنة"
+  },
+  {
+    "key": "appetizers",
+    "emoji": "🍟",
+    "label": "Appetizers",
+    "sort_order": 4,
+    "title": "Appetizers",
+    "title_ar": "المقبلات"
+  },
+  {
+    "key": "burgers",
+    "emoji": "🍔",
+    "label": "Burgers",
+    "sort_order": 5,
+    "title": "Sandwich & Burger Station",
+    "title_ar": "برجر ستيشن"
+  },
+  {
+    "key": "mains",
+    "emoji": "🍽",
+    "label": "Mains",
+    "sort_order": 6,
+    "title": "Main Course",
+    "title_ar": "الطبق الرئيسي"
+  },
+  {
+    "key": "grills",
+    "emoji": "🔥",
+    "label": "Grills",
+    "sort_order": 7,
+    "title": "Grills",
+    "title_ar": "مشويات"
+  },
+  {
+    "key": "pizza",
+    "emoji": "🍕",
+    "label": "Pizza & Fathayir",
+    "sort_order": 8,
+    "title": "Pizza & Fathayir",
+    "title_ar": "بيتزا و فطائر"
+  },
+  {
+    "key": "juices",
+    "emoji": "🥤",
+    "label": "Juices",
+    "sort_order": 9,
+    "title": "Fresh Juices",
+    "title_ar": "عصائر طازجة"
+  },
+  {
+    "key": "mocktails",
+    "emoji": "🍹",
+    "label": "Mocktails",
+    "sort_order": 10,
+    "title": "Mocktails & Milkshakes",
+    "title_ar": "موكتيل وميلك شيك"
+  },
+  {
+    "key": "mojito",
+    "emoji": "🌿",
+    "label": "Mojito",
+    "sort_order": 11,
+    "title": "Mojito",
+    "title_ar": "موهيتو"
+  },
+  {
+    "key": "cold-bev",
+    "emoji": "🧊",
+    "label": "Cold Drinks",
+    "sort_order": 12,
+    "title": "Cold Beverages",
+    "title_ar": "المشروبات الباردة"
+  },
+  {
+    "key": "hot-drinks",
+    "emoji": "☕",
+    "label": "Hot Drinks",
+    "sort_order": 13,
+    "title": "Hot Drinks",
+    "title_ar": "مشروبات ساخنة"
+  },
+  {
+    "key": "sweets",
+    "emoji": "🍫",
+    "label": "Sweets",
+    "sort_order": 14,
+    "title": "Sweets",
+    "title_ar": "حلو"
+  },
+  {
+    "key": "hot-coffee",
+    "emoji": "☕",
+    "label": "Hot Coffee",
+    "sort_order": 15,
+    "title": "Classic Hot Coffee",
+    "title_ar": "قهوة كلاسيكية ساخنة"
+  },
+  {
+    "key": "cold-coffee",
+    "emoji": "🧋",
+    "label": "Cold Coffee",
+    "sort_order": 16,
+    "title": "Classic Cold Coffee",
+    "title_ar": "قهوة باردة كلاسيكية"
+  },
+  {
+    "key": "celebration",
+    "emoji": "🎉",
+    "label": "Celebration",
+    "sort_order": 17,
+    "title": "Celebration Table",
+    "title_ar": "طاولة الاحتفال"
+  }
+]
