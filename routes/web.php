@@ -21,6 +21,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('menu-items', MenuItemController::class)->except('show');
+        Route::post('menu-items/{menuItem}/toggle-active', [MenuItemController::class, 'toggleActive'])->name('menu-items.toggle-active');
         Route::resource('categories', CategoryController::class)->except('show');
         Route::post('categories/{category}/move-up', [CategoryController::class, 'moveUp'])->name('categories.move-up');
         Route::post('categories/{category}/move-down', [CategoryController::class, 'moveDown'])->name('categories.move-down');

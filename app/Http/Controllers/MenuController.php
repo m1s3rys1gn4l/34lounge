@@ -28,7 +28,7 @@ class MenuController extends Controller
         foreach ($categories as $category) {
             $categoryLabels[$category->key] = "{$category->title} · {$category->title_ar}";
 
-            $menuForJs[$category->key] = $category->menuItems->map(fn ($item) => [
+            $menuForJs[$category->key] = $category->menuItems->where('is_active', true)->map(fn ($item) => [
                 'id' => $item->item_key,
                 'name' => $item->name,
                 'ar' => $item->name_ar,

@@ -27,6 +27,15 @@
       @if($item->exists) @method('PUT') @endif
 
       <div class="form-grid">
+        <div class="form-group full">
+          <div class="settings-row" style="display:flex;align-items:center;justify-content:space-between;background:var(--dark3);border:1px solid var(--border);padding:.7rem 1rem">
+            <div class="settings-row-label">Item is enabled (visible on the public menu)</div>
+            <label class="toggle-switch">
+              <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $item->exists ? $item->is_active : true))/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
         <div class="form-group">
           <label class="form-label">Item ID *</label>
           <input class="form-input" name="item_key" value="{{ old('item_key', $item->item_key) }}" placeholder="e.g. custom1" style="font-family:'JetBrains Mono',monospace" required/>

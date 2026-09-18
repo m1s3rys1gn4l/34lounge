@@ -27,6 +27,13 @@ class MenuItemController extends Controller
             $query->where('category_id', $categoryId);
         }
 
+        $status = $request->query('status');
+        if ($status === 'enabled') {
+            $query->where('is_active', true);
+        } elseif ($status === 'disabled') {
+            $query->where('is_active', false);
+        }
+
         $items = $query->paginate(30)->withQueryString();
         $categories = Category::orderBy('sort_order')->get();
 
@@ -73,6 +80,15 @@ class MenuItemController extends Controller
         return redirect()->route('admin.menu-items.index')->with('status', "Item \"{$menuItem->name}\" updated.");
     }
 
+    public function toggleActive(MenuItem $menuItem)
+    {
+        $menuItem->update(['is_active' => ! $menuItem->is_active]);
+
+        $status = $menuItem->is_active ? 'enabled' : 'disabled';
+
+        return back()->with('status', "Item \"{$menuItem->name}\" {$status}.");
+    }
+
     public function destroy(MenuItem $menuItem)
     {
         if ($menuItem->image_path && str_starts_with($menuItem->image_path, 'uploads/')) {
@@ -102,6 +118,7 @@ class MenuItemController extends Controller
             'image' => ['nullable', 'image', 'max:4096'],
             'remove_image' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer'],
+            'is_active' => ['nullable', 'boolean'],
         ]);
     }
 
@@ -117,6 +134,7 @@ class MenuItemController extends Controller
             'emoji' => $data['emoji'] ?? null,
             'description' => $data['description'] ?? null,
             'sort_order' => $data['sort_order'] ?? $item->sort_order ?? 0,
+            'is_active' => $request->boolean('is_active'),
         ]);
 
         if ($request->boolean('remove_image')) {
