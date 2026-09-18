@@ -22,7 +22,7 @@
 
 <div style="max-width:680px">
   <div style="background:var(--dark2);border:1px solid var(--border);padding:1.5rem">
-    <form method="POST" action="{{ $category->exists ? route('admin.categories.update', $category) : route('admin.categories.store') }}">
+    <form method="POST" action="{{ $category->exists ? route('admin.categories.update', $category) : route('admin.categories.store') }}" enctype="multipart/form-data">
       @csrf
       @if($category->exists) @method('PUT') @endif
 
@@ -33,13 +33,29 @@
           <small style="font-size:.68rem;color:var(--gold-dim);margin-top:.2rem;font-style:italic">Letters, numbers, dashes/underscores only. Used in the URL anchor.</small>
         </div>
         <div class="form-group">
-          <label class="form-label">Emoji</label>
+          <label class="form-label">Emoji (fallback icon)</label>
           <input class="form-input" name="emoji" value="{{ old('emoji', $category->emoji) }}" placeholder="🍽" maxlength="10"/>
+          <small style="font-size:.68rem;color:var(--gold-dim);margin-top:.2rem;font-style:italic">Shown in the nav tile only when no image is uploaded below.</small>
         </div>
         <div class="form-group full">
           <label class="form-label">Nav Label *</label>
           <input class="form-input" name="label" value="{{ old('label', $category->label) }}" placeholder="e.g. Mezza" required/>
-          <small style="font-size:.68rem;color:var(--gold-dim);margin-top:.2rem;font-style:italic">Shown in the top category nav bar (with the emoji).</small>
+          <small style="font-size:.68rem;color:var(--gold-dim);margin-top:.2rem;font-style:italic">Shown in the top category nav bar.</small>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Nav Tile Image</label>
+          <div class="img-upload-zone">
+            <input type="file" name="image" accept="image/*"/>
+            <div class="upload-icon">📷</div>
+            <p>Click to upload image</p>
+            <small>JPG, PNG, WebP — max 4MB. Replaces the emoji icon in the nav bar when set.</small>
+          </div>
+          @if($category->imageUrl())
+            <img class="img-preview show" src="{{ $category->imageUrl() }}" alt="{{ $category->label }}"/>
+            <label style="display:flex;align-items:center;gap:.5rem;margin-top:.6rem;font-size:.8rem;color:var(--cream-dim)">
+              <input type="checkbox" name="remove_image" value="1"/> Remove image (fall back to emoji)
+            </label>
+          @endif
         </div>
         <div class="form-group full">
           <label class="form-label">Section Title (English) *</label>

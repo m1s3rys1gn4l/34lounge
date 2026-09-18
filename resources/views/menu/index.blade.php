@@ -47,7 +47,16 @@
   <nav class="cat-nav">
     <div class="cat-nav-inner" id="catNav">
       @foreach($categories as $cat)
-      <div class="cat-item{{ $loop->first ? ' active' : '' }}" data-target="{{ $cat->key }}">{{ $cat->emoji }} {{ $cat->label }}</div>
+      <div class="cat-item{{ $loop->first ? ' active' : '' }}" data-target="{{ $cat->key }}">
+        <span class="cat-item-visual">
+          @if($cat->imageUrl())
+            <img src="{{ $cat->imageUrl() }}" alt="{{ $cat->label }}" loading="lazy"/>
+          @else
+            <span class="cat-item-emoji">{{ $cat->emoji }}</span>
+          @endif
+        </span>
+        <span class="cat-item-label">{{ $cat->label }}</span>
+      </div>
       @endforeach
     </div>
   </nav>

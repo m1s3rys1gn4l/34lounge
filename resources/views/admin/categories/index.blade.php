@@ -16,6 +16,7 @@
     <thead>
       <tr>
         <th>Order</th>
+        <th>Image</th>
         <th>Nav Label</th>
         <th>Section Title</th>
         <th>Key</th>
@@ -36,6 +37,13 @@
             <button class="act-btn" type="submit" @disabled($loop->last)>↓</button>
           </form>
         </td>
+        <td>
+          @if($cat->imageUrl())
+            <img class="item-thumb" src="{{ $cat->imageUrl() }}" alt="{{ $cat->label }}"/>
+          @else
+            <div class="item-thumb-ph">{{ $cat->emoji }}</div>
+          @endif
+        </td>
         <td>{{ $cat->emoji }} {{ $cat->label }}</td>
         <td>{{ $cat->title }}<br><span style="direction:rtl;font-size:.8rem;opacity:.7">{{ $cat->title_ar }}</span></td>
         <td style="font-family:'JetBrains Mono',monospace;font-size:.78rem">{{ $cat->key }}</td>
@@ -49,7 +57,7 @@
         </td>
       </tr>
       @empty
-      <tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📂</div><p>No categories yet</p></div></td></tr>
+      <tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📂</div><p>No categories yet</p></div></td></tr>
       @endforelse
     </tbody>
   </table>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
@@ -26,9 +27,11 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $data = $this->validated($request);
-        $data['sort_order'] = Category::max('sort_order') + 1;
 
-        $category = Category::create($data);
+        $category = new Category();
+        $this->fillFromRequest($category, $request, $data);
+        $category->sort_order = Category::max('sort_order') + 1;
+        $category->save();
 
         return redirect()->route('admin.categories.index')->with('status', "Category \"{$category->label}\" created.");
     }
@@ -40,7 +43,9 @@ class CategoryController extends Controller
 
     public function update(Request $request, Category $category)
     {
-        $category->update($this->validated($request, $category->id));
+        $data = $this->validated($request, $category->id);
+        $this->fillFromRequest($category, $request, $data);
+        $category->save();
 
         return redirect()->route('admin.categories.index')->with('status', "Category \"{$category->label}\" updated.");
     }
@@ -50,6 +55,10 @@ class CategoryController extends Controller
         if ($category->menuItems()->exists()) {
             return redirect()->route('admin.categories.index')
                 ->with('error', "Can't delete \"{$category->label}\" — it still has menu items. Move or delete them first.");
+        }
+
+        if ($category->image_path && str_starts_with($category->image_path, 'uploads/')) {
+            Storage::disk('public')->delete($category->image_path);
         }
 
         $label = $category->label;
@@ -99,6 +108,33 @@ class CategoryController extends Controller
             'emoji' => ['nullable', 'string', 'max:10'],
             'title' => ['required', 'string', 'max:150'],
             'title_ar' => ['nullable', 'string', 'max:150'],
+            'image' => ['nullable', 'image', 'max:4096'],
+            'remove_image' => ['nullable', 'boolean'],
         ]);
+    }
+
+    private function fillFromRequest(Category $category, Request $request, array $data): void
+    {
+        $category->fill([
+            'key' => $data['key'],
+            'label' => $data['label'],
+            'emoji' => $data['emoji'] ?? null,
+            'title' => $data['title'],
+            'title_ar' => $data['title_ar'] ?? null,
+        ]);
+
+        if ($request->boolean('remove_image')) {
+            if ($category->image_path && str_starts_with($category->image_path, 'uploads/')) {
+                Storage::disk('public')->delete($category->image_path);
+            }
+            $category->image_path = null;
+        }
+
+        if ($request->hasFile('image')) {
+            if ($category->image_path && str_starts_with($category->image_path, 'uploads/')) {
+                Storage::disk('public')->delete($category->image_path);
+            }
+            $category->image_path = $request->file('image')->store('uploads/categories', 'public');
+        }
     }
 }
