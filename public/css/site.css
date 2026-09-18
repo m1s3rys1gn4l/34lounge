@@ -6,11 +6,14 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-padding-top:60px}
-/* overflow-x:clip (not hidden) — hidden/auto/scroll all turn body into a
-   "scroll container", which breaks position:sticky for every descendant
-   (badly, on iOS Safari). clip prevents the same horizontal drag/overflow
-   without creating a scroll container, so sticky keeps working. */
-body{background:var(--dark);color:var(--cream);font-family:'Cormorant Garamond',Georgia,serif;overflow-x:clip}
+/* No overflow-x here on purpose. Any non-visible overflow value on body —
+   including hidden, auto, scroll, and even clip — breaks position:sticky
+   for every descendant in real browsers (measured directly, not just per
+   spec footnotes). Horizontal drag/overflow is prevented by fixing the
+   actual elements that were wider than the viewport instead (removed the
+   dead hamburger button, let the search box actually shrink) — see the
+   700px breakpoint below. */
+body{background:var(--dark);color:var(--cream);font-family:'Cormorant Garamond',Georgia,serif}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;opacity:.35}
 
 /* ══ HEADER ══ */

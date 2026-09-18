@@ -42,25 +42,27 @@
       </button>
     </div>
   </div>
-
-  <!-- Category Nav -->
-  <nav class="cat-nav">
-    <div class="cat-nav-inner" id="catNav">
-      @foreach($categories as $cat)
-      <div class="cat-item{{ $loop->first ? ' active' : '' }}" data-target="{{ $cat->key }}">
-        <span class="cat-item-visual">
-          @if($cat->imageUrl())
-            <img src="{{ $cat->imageUrl() }}" alt="{{ $cat->label }}" loading="lazy"/>
-          @else
-            <span class="cat-item-emoji">{{ $cat->emoji }}</span>
-          @endif
-        </span>
-        <span class="cat-item-label">{{ $cat->label }}</span>
-      </div>
-      @endforeach
-    </div>
-  </nav>
 </header>
+
+<!-- Category Nav — a sibling of <header>, not nested inside it, so its
+     sticky containing block is the full page rather than the short
+     header block (which would otherwise drag it away after ~130px). -->
+<nav class="cat-nav">
+  <div class="cat-nav-inner" id="catNav">
+    @foreach($categories as $cat)
+    <div class="cat-item{{ $loop->first ? ' active' : '' }}" data-target="{{ $cat->key }}">
+      <span class="cat-item-visual">
+        @if($cat->imageUrl())
+          <img src="{{ $cat->imageUrl() }}" alt="{{ $cat->label }}" loading="lazy"/>
+        @else
+          <span class="cat-item-emoji">{{ $cat->emoji }}</span>
+        @endif
+      </span>
+      <span class="cat-item-label">{{ $cat->label }}</span>
+    </div>
+    @endforeach
+  </div>
+</nav>
 
 <!-- ══════════ HERO SWIPER ══════════ -->
 <section class="hero-swiper" id="heroSwiper">
