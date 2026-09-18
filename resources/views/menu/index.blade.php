@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>{{ $settings->restaurant_name }} — Menu</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="{{ asset('css/site.css') }}"/>
+<link rel="stylesheet" href="{{ asset('css/site.css') }}?v={{ filemtime(public_path('css/site.css')) }}"/>
 </head>
 <body>
 
@@ -318,6 +318,6 @@ const SHOW_PLACEHOLDER = @json((bool) $settings->show_placeholder);
 const ENABLE_POPUPS = @json((bool) $settings->enable_popups);
 const ENABLE_WHATSAPP_ORDER = @json((bool) $settings->enable_whatsapp_order);
 </script>
-<script src="{{ asset('js/site.js') }}"></script>
+<script src="{{ asset('js/site.js') }}?v={{ filemtime(public_path('js/site.js')) }}"></script>
 </body>
 </html>
