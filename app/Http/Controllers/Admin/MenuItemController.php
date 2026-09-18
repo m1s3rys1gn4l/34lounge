@@ -19,7 +19,8 @@ class MenuItemController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('name_ar', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('description_ar', 'like', "%{$search}%");
             });
         }
 
@@ -115,6 +116,7 @@ class MenuItemController extends Controller
             'badge' => ['nullable', 'string', 'max:50'],
             'emoji' => ['nullable', 'string', 'max:10'],
             'description' => ['nullable', 'string'],
+            'description_ar' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:4096'],
             'remove_image' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer'],
@@ -133,6 +135,7 @@ class MenuItemController extends Controller
             'badge' => $data['badge'] ?? null,
             'emoji' => $data['emoji'] ?? null,
             'description' => $data['description'] ?? null,
+            'description_ar' => $data['description_ar'] ?? null,
             'sort_order' => $data['sort_order'] ?? $item->sort_order ?? 0,
             'is_active' => $request->boolean('is_active'),
         ]);

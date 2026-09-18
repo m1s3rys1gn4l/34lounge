@@ -370,7 +370,7 @@ function openModal(itemId, category) {
       ${item.desc ? `<div class="modal-divider"></div>
       <div class="modal-desc-title">About this dish</div>
       <div class="modal-desc">${item.desc}</div>
-      <div class="modal-desc-ar">${translateDescAr(item.id, item.desc)}</div>` : ''}
+      <div class="modal-desc-ar">${item.descAr || item.desc}</div>` : ''}
       <div class="modal-actions">
         ${ENABLE_WHATSAPP_ORDER
           ? `<button class="modal-add-btn" onclick="orderItemViaWhatsApp('${item.id}','${category}')">
@@ -394,13 +394,6 @@ function closeModal() {
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-// Desc placeholder translations (for items without Arabic desc, show note)
-function translateDescAr(id, desc) {
-  // Items that have Arabic descriptions hardcoded can be added here
-  // For now show a note pointing to back office
-  return desc ? `<span style="color:var(--gold-dim);font-size:.75rem">الوصف بالعربية: أضفه من لوحة التحكم ← Back Office</span>` : '';
-}
 
 /* ════════════════════════════════════════
    MAKE CARDS CLICKABLE (open modal)

@@ -36,6 +36,7 @@ class MenuController extends Controller
                 'badge' => $item->badge,
                 'emoji' => $item->emoji,
                 'desc' => $item->description,
+                'descAr' => $item->description_ar,
                 'img' => $item->imageUrl(),
             ])->values();
         }

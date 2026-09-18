@@ -78,6 +78,11 @@
           <textarea class="form-input" name="description" rows="3" placeholder="Ingredients, preparation, flavour notes…">{{ old('description', $item->description) }}</textarea>
         </div>
         <div class="form-group full">
+          <label class="form-label">Description (Arabic)</label>
+          <textarea class="form-input" name="description_ar" rows="3" placeholder="المكونات، طريقة التحضير، ملاحظات النكهة…" style="direction:rtl;font-family:'Noto Naskh Arabic',serif">{{ old('description_ar', $item->description_ar) }}</textarea>
+          <small style="font-size:.68rem;color:var(--gold-dim);margin-top:.2rem;font-style:italic">Shown in the item preview popup when the site is switched to Arabic.</small>
+        </div>
+        <div class="form-group full">
           <label class="form-label">Image Upload</label>
           <div class="img-upload-zone">
             <input type="file" name="image" accept="image/*"/>
