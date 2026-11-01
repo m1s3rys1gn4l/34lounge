@@ -31,10 +31,15 @@
   @endforeach
 </div>
 
+@if(! $reorderable)
+<div class="badge-pill premium" style="display:inline-flex;margin-bottom:1rem">Pick one category above to reorder its items</div>
+@endif
+
 <div class="menu-table-wrap">
   <table class="menu-table">
     <thead>
       <tr>
+        @if($reorderable)<th>Order</th>@endif
         <th>Image</th>
         <th>Name</th>
         <th>Arabic</th>
@@ -48,6 +53,18 @@
     <tbody>
       @forelse($items as $item)
       <tr style="{{ $item->is_active ? '' : 'opacity:.55' }}">
+        @if($reorderable)
+        <td style="display:flex;gap:.3rem">
+          <form method="POST" action="{{ route('admin.menu-items.move-up', $item) }}">
+            @csrf
+            <button class="act-btn" type="submit" @disabled($loop->first)>↑</button>
+          </form>
+          <form method="POST" action="{{ route('admin.menu-items.move-down', $item) }}">
+            @csrf
+            <button class="act-btn" type="submit" @disabled($loop->last)>↓</button>
+          </form>
+        </td>
+        @endif
         <td>
           @if($item->imageUrl())
             <img class="item-thumb" src="{{ $item->imageUrl() }}" alt="{{ $item->name }}"/>
@@ -84,7 +101,7 @@
         </td>
       </tr>
       @empty
-      <tr><td colspan="8"><div class="empty-state"><div class="empty-icon">🍽</div><p>No items found</p></div></td></tr>
+      <tr><td colspan="{{ $reorderable ? 9 : 8 }}"><div class="empty-state"><div class="empty-icon">🍽</div><p>No items found</p></div></td></tr>
       @endforelse
     </tbody>
   </table>

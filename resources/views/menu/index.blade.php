@@ -34,7 +34,7 @@
     </div>
 
     <div class="header-actions">
-      <a href="34lounge_reservation.html" class="hdr-btn">🗓 Reserve</a>
+      <a href="javascript:void(0)" onclick="reserveTable()" class="hdr-btn">🗓 Reserve</a>
       <a href="{{ route('admin.dashboard') }}" class="hdr-btn" title="Back Office">⚙️</a>
       <button class="hdr-btn cart-btn primary" onclick="toggleCart()">
         🛒 <span class="cart-label">Cart</span>
@@ -76,7 +76,7 @@
         <p class="slide-sub">Where Lebanese heritage meets contemporary dining</p>
         <div class="slide-cta">
           <a class="slide-btn primary" href="#breakfast">Explore Menu</a>
-          <a class="slide-btn outline" href="34lounge_reservation.html">Reserve a Table</a>
+          <a class="slide-btn outline" href="javascript:void(0)" onclick="reserveTable()">Reserve a Table</a>
         </div>
       </div>
     </div>
@@ -89,7 +89,7 @@
         <p class="slide-sub">Fresh cuts, aromatic spices, flames that tell a story</p>
         <div class="slide-cta">
           <a class="slide-btn primary" href="#grills">View Grills</a>
-          <a class="slide-btn outline" href="34lounge_reservation.html">Book Now</a>
+          <a class="slide-btn outline" href="javascript:void(0)" onclick="reserveTable()">Book Now</a>
         </div>
       </div>
     </div>
@@ -102,7 +102,7 @@
         <p class="slide-sub">Birthday packages, private rooms & premium décor from KWD 20</p>
         <div class="slide-cta">
           <a class="slide-btn primary" href="#celebration">See Packages</a>
-          <a class="slide-btn outline" href="34lounge_reservation.html">Reserve Now</a>
+          <a class="slide-btn outline" href="javascript:void(0)" onclick="reserveTable()">Reserve Now</a>
         </div>
       </div>
     </div>
@@ -128,7 +128,7 @@
         <p class="slide-sub">Warm interiors, attentive service, unforgettable evenings</p>
         <div class="slide-cta">
           <a class="slide-btn primary" href="#breakfast">Explore Menu</a>
-          <a class="slide-btn outline" href="34lounge_reservation.html">Reserve a Table</a>
+          <a class="slide-btn outline" href="javascript:void(0)" onclick="reserveTable()">Reserve a Table</a>
         </div>
       </div>
     </div>
@@ -141,7 +141,7 @@
         <p class="slide-sub">Every dish plated fresh, from our kitchen to your table</p>
         <div class="slide-cta">
           <a class="slide-btn primary" href="#mains">View Mains</a>
-          <a class="slide-btn outline" href="34lounge_reservation.html">Book Now</a>
+          <a class="slide-btn outline" href="javascript:void(0)" onclick="reserveTable()">Book Now</a>
         </div>
       </div>
     </div>
@@ -154,7 +154,7 @@
         <p class="slide-sub">Come see what everyone's talking about</p>
         <div class="slide-cta">
           <a class="slide-btn primary" href="#breakfast">Explore Menu</a>
-          <a class="slide-btn outline" href="34lounge_reservation.html">Reserve a Table</a>
+          <a class="slide-btn outline" href="javascript:void(0)" onclick="reserveTable()">Reserve a Table</a>
         </div>
       </div>
     </div>
@@ -255,7 +255,7 @@
   <div class="footer-bottom">
     <div class="footer-copy">© {{ date('Y') }} {{ $settings->restaurant_name }} Restaurant & Café. All rights reserved. · {{ $settings->location }}</div>
     <div style="font-size:.72rem;color:var(--gold-dim)">
-      <a href="34lounge_reservation.html" style="color:var(--gold-dim);text-decoration:none;margin-right:1rem">Reserve a Table</a>
+      <a href="javascript:void(0)" onclick="reserveTable()" style="color:var(--gold-dim);text-decoration:none;margin-right:1rem">Reserve a Table</a>
       <a href="{{ route('admin.dashboard') }}" style="color:var(--gold-dim);text-decoration:none">Back Office</a>
     </div>
   </div>
@@ -278,7 +278,7 @@
     @if($settings->enable_whatsapp_order)
     <button class="checkout-btn" onclick="checkout()">Place Order via WhatsApp →</button>
     @endif
-    <button class="reserve-btn" onclick="window.location='34lounge_reservation.html'">🗓 Reserve a Table Instead</button>
+    <button class="reserve-btn" onclick="reserveTable()">🗓 Reserve a Table Instead</button>
   </div>
 </div>
 

@@ -87,6 +87,11 @@ function orderItemViaWhatsApp(itemId, category) {
   window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
 }
 
+function reserveTable() {
+  const msg = encodeURIComponent(`🗓 *Table Reservation Request — ${RESTAURANT_NAME}*\n\nHi! I'd like to reserve a table.\n\n• Date: \n• Time: \n• Number of guests: \n• Name: \n\nPlease confirm availability. Thank you!`);
+  window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
+}
+
 /* ════════════════════════════════════════
    RENDER ITEMS
 ════════════════════════════════════════ */

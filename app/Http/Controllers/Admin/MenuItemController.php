@@ -13,7 +13,7 @@ class MenuItemController extends Controller
 {
     public function index(Request $request)
     {
-        $query = MenuItem::query()->with('category')->orderBy('name');
+        $query = MenuItem::query()->with('category');
 
         if ($search = $request->query('q')) {
             $query->where(function ($q) use ($search) {
@@ -24,7 +24,8 @@ class MenuItemController extends Controller
             });
         }
 
-        if ($categoryId = $request->query('category')) {
+        $categoryId = $request->query('category');
+        if ($categoryId) {
             $query->where('category_id', $categoryId);
         }
 
@@ -35,10 +36,23 @@ class MenuItemController extends Controller
             $query->where('is_active', false);
         }
 
-        $items = $query->paginate(30)->withQueryString();
+        // Reordering (sort_order) only means something within a single category, so
+        // only sort by it — and only show the up/down controls — when a category
+        // filter is active. Otherwise keep alphabetical for easier browsing/search.
+        $reorderable = (bool) $categoryId;
+        if ($reorderable) {
+            $query->orderBy('sort_order')->orderBy('name');
+        } else {
+            $query->orderBy('name');
+        }
+
+        // Reordering swaps sort_order with a neighbor, which only makes sense if
+        // the whole category's items are visible on one page — bump the page
+        // size so a category never gets split across pages while reordering.
+        $items = $query->paginate($reorderable ? 100 : 30)->withQueryString();
         $categories = Category::orderBy('sort_order')->get();
 
-        return view('admin.menu-items.index', compact('items', 'categories'));
+        return view('admin.menu-items.index', compact('items', 'categories', 'reorderable'));
     }
 
     public function create()
@@ -54,6 +68,9 @@ class MenuItemController extends Controller
     public function store(Request $request)
     {
         $data = $this->validated($request);
+        if (empty($data['sort_order'])) {
+            $data['sort_order'] = MenuItem::where('category_id', $data['category_id'])->max('sort_order') + 1;
+        }
 
         $item = new MenuItem();
         $this->fillFromRequest($item, $request, $data);
@@ -79,6 +96,38 @@ class MenuItemController extends Controller
         $menuItem->save();
 
         return redirect()->route('admin.menu-items.index')->with('status', "Item \"{$menuItem->name}\" updated.");
+    }
+
+    public function moveUp(MenuItem $menuItem)
+    {
+        $prev = MenuItem::where('category_id', $menuItem->category_id)
+            ->where('sort_order', '<', $menuItem->sort_order)
+            ->orderByDesc('sort_order')
+            ->first();
+
+        if ($prev) {
+            [$menuItem->sort_order, $prev->sort_order] = [$prev->sort_order, $menuItem->sort_order];
+            $menuItem->save();
+            $prev->save();
+        }
+
+        return back();
+    }
+
+    public function moveDown(MenuItem $menuItem)
+    {
+        $next = MenuItem::where('category_id', $menuItem->category_id)
+            ->where('sort_order', '>', $menuItem->sort_order)
+            ->orderBy('sort_order')
+            ->first();
+
+        if ($next) {
+            [$menuItem->sort_order, $next->sort_order] = [$next->sort_order, $menuItem->sort_order];
+            $menuItem->save();
+            $next->save();
+        }
+
+        return back();
     }
 
     public function toggleActive(MenuItem $menuItem)
