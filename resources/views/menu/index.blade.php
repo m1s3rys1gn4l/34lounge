@@ -205,6 +205,43 @@
         <div class="meat-badge"><span class="icon">🧀</span> Imported European Dairy</div>
         <div class="meat-badge"><span class="icon">🌾</span> No Artificial Preservatives</div>
       </div>
+
+      <div class="meat-source-wrap">
+        <h4 class="meat-source-title">Meat Sources <span class="ar">مصادر اللحوم</span></h4>
+        <div class="meat-source-table-scroll">
+          <table class="meat-source-table">
+            <thead>
+              <tr>
+                <th>Kind <span class="ar">النوع</span></th>
+                <th>Country <span class="ar">بلد المنشأ</span></th>
+                <th>Type <span class="ar">النوع</span></th>
+                <th>Category <span class="ar">الفئة</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach([
+                ['Lamb', 'لحم خروف', 'Australia', 'أستراليا', 'Fresh Frozen', 'طازج مجمد', 'Grills', 'مشوي'],
+                ['Chicken', 'دجاج', 'Kuwait / Saudi', 'كويتي / سعودي', 'Frozen', 'مجمد', 'Grills', 'مشوي'],
+                ['Lamb Shank', 'موزات خروف', 'Australia', 'أستراليا', 'Fresh Frozen', 'طازج مجمد', 'General', 'عام'],
+                ['Whole Chicken', 'دجاج كامل', 'Brazil', 'البرازيل', 'Frozen', 'مجمد', 'General', 'عام'],
+                ['Fish Hamour', 'سمك هامور', 'Kuwait', 'الكويت', 'Fresh Frozen', 'طازج مجمد', 'General', 'عام'],
+                ['Shrimps', 'روبيان', 'India', 'الهند', 'Frozen', 'مجمد', 'General', 'عام'],
+                ['Fish Salmon', 'سالمون', 'Norway', 'النرويج', 'Frozen', 'مجمد', 'General', 'عام'],
+                ['Chicken Breast', 'صدر دجاج', 'UAE', 'الإمارات المتحدة', 'Frozen', 'مجمد', 'General', 'عام'],
+                ['Beef', 'لحم بقري', 'USA', 'الولايات المتحدة الأمريكية', 'Frozen', 'مجمد', 'General', 'عام'],
+                ['Lamb', 'لحم خروف', 'Australia', 'أستراليا', 'Frozen', 'مجمد', 'General', 'عام'],
+              ] as $row)
+              <tr>
+                <td>{{ $row[0] }} <span class="ar">{{ $row[1] }}</span></td>
+                <td>{{ $row[2] }} <span class="ar">{{ $row[3] }}</span></td>
+                <td>{{ $row[4] }} <span class="ar">{{ $row[5] }}</span></td>
+                <td>{{ $row[6] }} <span class="ar">{{ $row[7] }}</span></td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
